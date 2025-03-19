@@ -1,6 +1,6 @@
-**First name:** XXXX
+**First name:** Dio
 
-**Last name:** XXXX
+**Last name:** Ngei Okparaji
 
 
 
@@ -12,7 +12,9 @@
 
 **[Optional] Motivate your design decisions. Are there any designs you considered but decided not to implement? Why?**
 
-- XXXX
+- To manage dependencies I used poetry, ensuring usability and maintainability for people who want to run the app.
+- To ensure code quality is up to standards and this quality is maintained, Github actions are used for linting and formatting checks, which are performed on pull request
+- To ensure no functionality is lost, all pytest's are run through Github action on pull requests.
 
 
 
