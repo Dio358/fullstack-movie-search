@@ -17,7 +17,7 @@ swagger = Swagger(app)
 
 class Welcome(Resource):
     """
-        A Test Class
+        A Test Class 2.0
     """
     @swag_from(
         {
