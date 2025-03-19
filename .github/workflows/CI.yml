@@ -41,10 +41,12 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Run poetry shell
-        run: poetry shell
-        
-      - name: Check formatting - run Black
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-in-project: true
+
+      - name: Run Black
         run: poetry run black --check --diff .
 
   linting:
@@ -60,12 +62,13 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Run poetry shell
-        run: poetry shell
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-in-project: true
 
       - name: Check linting - run Pylint
         run: poetry run pylint your_package_name
-
 
   test:
     runs-on: ubuntu-latest
@@ -79,6 +82,11 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-in-project: true
 
       - name: Run Tests
         run: poetry run pytest
