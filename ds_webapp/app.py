@@ -1,4 +1,4 @@
-"""This module defines the main application for DS_webApp.
+"""This module defines the main application for ds_webapp.
 
 It sets up the web framework, routes, and initializes the necessary services.
 """
