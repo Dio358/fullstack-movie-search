@@ -2,26 +2,57 @@
 
 It sets up the web framework, routes, and initializes the necessary services.
 """
-
+import os
+from dotenv import load_dotenv
 from flasgger import Swagger, swag_from
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
+import requests
+
+from ds_webapp.movie_utils import create_movie_list
+from ds_webapp.schemas import Movie
+
+# load environment variables
+load_dotenv()
+
+# setting API url and key
+API_URL = os.getenv("API_URL")
+API_KEY = os.getenv("API_KEY")
 
 app = Flask(__name__)
 api = Api(app)
 
 # Configuring Swagger
-app.config["SWAGGER"] = {"title": "My API", "uiversion": 3}
+app.config["SWAGGER"] = {
+    "title": "My API",
+    "uiversion": 3,
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Enter your Bearer token in the format 'Bearer <your-token-here>'"
+        }
+    },
+    "security": [{"BearerAuth": []}]
+}
+
 swagger = Swagger(app)
 
 
-class Welcome(Resource):
-    """
-    A Test Class
-    """
-
+class Movies(Resource):
+    """A class to send requests related to movies"""
     @swag_from(
         {
+            "parameters": [
+                        {
+                            "name": "n",
+                            "in": "query",
+                            "type": "integer",
+                            "required": True,
+                            "description": "The length of the list of requested movies"
+                        }
+                    ],
             "responses": {
                 200: {
                     "description": "A status code 200 means successful and returns a message.",
@@ -30,7 +61,7 @@ class Welcome(Resource):
                             "examples": {
                                 "example1": {
                                     "summary": "Successful response",
-                                    "value": {"message": "Welcome GeeksforGeeks!!"},
+                                    "value": [{"title": "Movie 1"}, {"title": "Movie 2"}],
                                 }
                             }
                         }
@@ -39,48 +70,37 @@ class Welcome(Resource):
             }
         }
     )
+
     def get(self):
         """
-        This is an example endpoint which returns a simple message.
+        Request a list of the n most popular movies,
+        :param n: an int
+        :precondition: 1 <= n <= 20
+        :return:
         """
-        return {"message": "Welcome GeeksforGeeks!!"}
 
+        n = request.args.get("n", default=1, type=int)
 
-class Items(Resource):
-    """
-    A Test Class
-    """
-
-    @swag_from(
-        {
-            "responses": {
-                200: {
-                    "description": "A status code 200 means successful "
-                    "and returns a list of items.",
-                    "content": {
-                        "application/json": {
-                            "examples": {
-                                "example1": {
-                                    "summary": "Successful response",
-                                    "value": {"items": ["Item 1", "Item 2", "Item 3"]},
-                                }
-                            }
-                        }
-                    },
-                }
-            }
+        headers = {
+            "accept": "application/json",
+            "Authorization": API_KEY
         }
-    )
-    def get(self):
-        """
-        This endpoint returns a list of items.
-        """
-        items = ["Item 1", "Item 2", "Item 3"]
-        return {"items": items}
+
+        params = {
+            "language": "en-US",
+            "page": n
+        }
+
+        response = requests.get(f"{API_URL}/movie/popular", headers=headers, params=params)
+
+        if response.status_code == 200:
+            return jsonify(create_movie_list(movie_list=[Movie.model_validate(movie) for movie in response.json()["results"]], length=n))
+
+        return jsonify({"error": str(response.status_code), "message": response.text}), response.status_code
 
 
-api.add_resource(Welcome, "/")
-api.add_resource(Items, "/items")
+
+api.add_resource(Movies, "/movies")
 
 if __name__ == "__main__":
     app.run(debug=True)

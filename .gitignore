@@ -1,3 +1,4 @@
 .idea
 creds
-/ds_webapp/__pycache__
+/ds_webapp/__pycache__/
+.env
