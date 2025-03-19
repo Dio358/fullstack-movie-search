@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction --no-root
 
-  formatting-and-linting:
+  formatting:
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -47,8 +47,25 @@ jobs:
       - name: Check formatting - run Black
         run: poetry run black --check --diff .
 
+  linting:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Restore cached dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Run poetry shell
+        run: poetry shell
+
       - name: Check linting - run Pylint
         run: poetry run pylint your_package_name
+
 
   test:
     runs-on: ubuntu-latest
