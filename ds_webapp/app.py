@@ -1,3 +1,8 @@
+"""This module defines the main application for DS_webApp.
+
+It sets up the web framework, routes, and initializes the necessary services.
+"""
+
 from flasgger import Swagger, swag_from
 from flask import Flask
 from flask_restful import Api, Resource
@@ -11,6 +16,9 @@ swagger = Swagger(app)
 
 
 class Welcome(Resource):
+    """
+        A Test Class
+    """
     @swag_from(
         {
             "responses": {
@@ -38,11 +46,15 @@ class Welcome(Resource):
 
 
 class Items(Resource):
+    """
+        A Test Class
+    """
     @swag_from(
         {
             "responses": {
                 200: {
-                    "description": "A status code 200 means successful and returns a list of items.",
+                    "description": "A status code 200 means successful "
+                                   "and returns a list of items.",
                     "content": {
                         "application/json": {
                             "examples": {
