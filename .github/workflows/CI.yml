@@ -25,6 +25,9 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
+      - name: Change directory
+        run: cd ds_webapp/
+
       - name: Install dependencies
         run: poetry install --no-interaction --no-root
 
