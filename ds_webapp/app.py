@@ -17,8 +17,9 @@ swagger = Swagger(app)
 
 class Welcome(Resource):
     """
-        A Test Class
+    A Test Class
     """
+
     @swag_from(
         {
             "responses": {
@@ -47,14 +48,15 @@ class Welcome(Resource):
 
 class Items(Resource):
     """
-        A Test Class
+    A Test Class
     """
+
     @swag_from(
         {
             "responses": {
                 200: {
                     "description": "A status code 200 means successful "
-                                   "and returns a list of items.",
+                    "and returns a list of items.",
                     "content": {
                         "application/json": {
                             "examples": {
