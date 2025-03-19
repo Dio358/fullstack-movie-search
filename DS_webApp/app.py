@@ -1,6 +1,6 @@
-from flask import Flask, request
-from flask_restful import Api, Resource
 from flasgger import Swagger, swag_from
+from flask import Flask
+from flask_restful import Api, Resource
 
 app = Flask(__name__)
 api = Api(app)
