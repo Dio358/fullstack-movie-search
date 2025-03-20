@@ -7,7 +7,7 @@ import os
 import requests
 from flask import jsonify, Response
 
-from ds_webapp.consume_api.movie_utils import create_movie_list
+from ds_webapp.consume_api.utils import create_movie_list
 from ds_webapp.consume_api.schemas import Movie
 
 # setting API url and key

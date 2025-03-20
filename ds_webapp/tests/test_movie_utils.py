@@ -1,8 +1,8 @@
 """
-A file for testing movie_utils.py
+A file for testing utils.py
 """
 
-from ds_webapp.consume_api.movie_utils import create_movie_list
+from ds_webapp.consume_api.utils import create_movie_list
 
 
 def test_create_movie_list(movie_list_example):

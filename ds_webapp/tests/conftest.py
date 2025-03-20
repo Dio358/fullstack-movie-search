@@ -17,7 +17,9 @@ load_dotenv()
 
 @pytest.fixture
 def client():
-    """Fixture to provide a Flask test client."""
+    """
+    Fixture to provide a Flask test client.
+    """
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
@@ -25,7 +27,9 @@ def client():
 
 @pytest.fixture()
 def movie_list_example() -> list[Movie]:
-    """Load test JSON data from file."""
+    """
+    Load test JSON data from file.
+    """
     json_path = Path(__file__).parent / "test_movie_list.json"
 
     with open(json_path, "r", encoding="utf-8") as file:
