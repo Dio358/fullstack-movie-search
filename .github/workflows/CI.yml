@@ -71,6 +71,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      API_URL: "https://api.example.com"
+      API_KEY: "your_secret_api_key"
     needs: setup
     steps:
       - name: Check out code

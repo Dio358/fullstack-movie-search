@@ -1,86 +1,38 @@
-"""This module defines the main application for DS_webApp.
+"""This module defines the main application for ds_webapp.
 
 It sets up the web framework, routes, and initializes the necessary services.
 """
 
-from flasgger import Swagger, swag_from
+from dotenv import load_dotenv
+from flasgger import Swagger
 from flask import Flask
-from flask_restful import Api, Resource
+from flask_restful import Api
+
+import ds_webapp.api
+
+# load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 api = Api(app)
 
 # Configuring Swagger
-app.config["SWAGGER"] = {"title": "My API", "uiversion": 3}
+app.config["SWAGGER"] = {
+    "title": "My API",
+    "uiversion": 3,
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Enter your Bearer token in the format 'Bearer <your-token-here>'",
+        }
+    },
+    "security": [{"BearerAuth": []}],
+}
+
 swagger = Swagger(app)
-
-
-class Welcome(Resource):
-    """
-    A Test Class
-    """
-
-    @swag_from(
-        {
-            "responses": {
-                200: {
-                    "description": "A status code 200 means successful and returns a message.",
-                    "content": {
-                        "application/json": {
-                            "examples": {
-                                "example1": {
-                                    "summary": "Successful response",
-                                    "value": {"message": "Welcome GeeksforGeeks!!"},
-                                }
-                            }
-                        }
-                    },
-                }
-            }
-        }
-    )
-    def get(self):
-        """
-        This is an example endpoint which returns a simple message.
-        """
-        return {"message": "Welcome GeeksforGeeks!!"}
-
-
-class Items(Resource):
-    """
-    A Test Class
-    """
-
-    @swag_from(
-        {
-            "responses": {
-                200: {
-                    "description": "A status code 200 means successful "
-                    "and returns a list of items.",
-                    "content": {
-                        "application/json": {
-                            "examples": {
-                                "example1": {
-                                    "summary": "Successful response",
-                                    "value": {"items": ["Item 1", "Item 2", "Item 3"]},
-                                }
-                            }
-                        }
-                    },
-                }
-            }
-        }
-    )
-    def get(self):
-        """
-        This endpoint returns a list of items.
-        """
-        items = ["Item 1", "Item 2", "Item 3"]
-        return {"items": items}
-
-
-api.add_resource(Welcome, "/")
-api.add_resource(Items, "/items")
+ds_webapp.api.add_endpoints(api)
 
 if __name__ == "__main__":
     app.run(debug=True)

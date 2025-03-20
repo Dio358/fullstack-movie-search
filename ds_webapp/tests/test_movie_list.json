@@ -1,0 +1,360 @@
+{
+  "page": 5,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/qtdoFQALRZTiePFMbCcxrtEA9e1.jpg",
+      "genre_ids": [
+        99
+      ],
+      "id": 1441746,
+      "original_language": "da",
+      "original_title": "Close to Home",
+      "overview": "A simple and beautiful portrait of a filmmaker and his Indian father, shot in one long take on a bench in Punjab.",
+      "popularity": 15.126,
+      "poster_path": null,
+      "release_date": "2025-03-20",
+      "title": "Close to Home",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [],
+      "id": 1440906,
+      "original_language": "en",
+      "original_title": "W.O.M.B. (Worth of My Body)",
+      "overview": "Becoming a mother brings many changes: the relationship to your body, to time and material things, to the sense of identity and heritage. Dancer, choreographer and artist Julienne Doko invites us to reflect on the body’s ability to change through the different cultural perceptions of motherhood in a performative work that celebrates the body that bears signs of having created life. In English, the term ‘stretch mark’ shows a negative assessment of body changes. In Doko’s native language, Gbaya from the Central African Republic, the marks are called ‘ancestral tattoo’, a word charged with pride in the continuation and transmission of life.",
+      "popularity": 15.123,
+      "poster_path": null,
+      "release_date": "2025-03-20",
+      "title": "W.O.M.B. (Worth of My Body)",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/j4bby8k81QzncpkPaYstmSHS491.jpg",
+      "genre_ids": [],
+      "id": 1440828,
+      "original_language": "en",
+      "original_title": "They Know We Know They Lie",
+      "overview": "A performative video work that analyzes the complex relationship between urbanity, economy and memory in the 21st century.",
+      "popularity": 15.123,
+      "poster_path": null,
+      "release_date": "2025-03-20",
+      "title": "They Know We Know They Lie",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/rBwDpf79YgUM7p0HnsjvmlJUeGi.jpg",
+      "genre_ids": [],
+      "id": 1440811,
+      "original_language": "xx",
+      "original_title": "I am everything",
+      "overview": "An artificial intelligence develops self-awareness and reflects on humanity's moral codes and social structures.",
+      "popularity": 15.123,
+      "poster_path": null,
+      "release_date": "2025-03-20",
+      "title": "I am everything",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [],
+      "id": 1440776,
+      "original_language": "en",
+      "original_title": "4.48 Dysphoria",
+      "overview": "4.48 Dysphoria examines the pathologization of gender nonconformity and the intersections between mental illness and queerness.",
+      "popularity": 15.123,
+      "poster_path": "/zZ6vbVb5ZJLIvYI1E1duqmsTvuj.jpg",
+      "release_date": "2025-03-20",
+      "title": "4.48 Dysphoria",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/ArjwHx7O7grRbhSW8PrKho6u7eh.jpg",
+      "genre_ids": [
+        53,
+        10752,
+        28,
+        18
+      ],
+      "id": 1440404,
+      "original_language": "en",
+      "original_title": "Ambivalence",
+      "overview": "A group of mercenaries race against others to recover a mysterious package, only to discover that its contents will tear their loyalties apart.",
+      "popularity": 15.123,
+      "poster_path": "/tVJQS9vPhFXtUo33KApa48Ofv7E.jpg",
+      "release_date": "2025-03-20",
+      "title": "Ambivalence",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        99
+      ],
+      "id": 1439033,
+      "original_language": "es",
+      "original_title": "Montevideo Inolvidable",
+      "overview": "",
+      "popularity": 15.123,
+      "poster_path": "/4HoDeqfsZPoIZbukRnhlhdPU9cv.jpg",
+      "release_date": "2025-03-20",
+      "title": "Montevideo Inolvidable",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        28,
+        35
+      ],
+      "id": 1438480,
+      "original_language": "kk",
+      "original_title": "Super курьер",
+      "overview": "Timur is a kind-hearted courier who is always ready to help others, even at his own expense. One day, after defending a respected judge from a group of thugs, he receives an unusual offer—to become the driver for the judge’s daughter, Sabina. However, he soon realizes that his real job is to be her bodyguard, as a powerful enemy of the family is willing to do anything to take her away. When Sabina is kidnapped, Timur must cast aside his fears and become a hero to save her and uncover why she is so important to the criminals.",
+      "popularity": 15.123,
+      "poster_path": "/gMwRomvk9l3O3jU6G3NckjShEWV.jpg",
+      "release_date": "2025-03-20",
+      "title": "Super courier",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/iwt36Pst6XYNBoAQJ1afK9zBCCS.jpg",
+      "genre_ids": [
+        28,
+        36
+      ],
+      "id": 1438203,
+      "original_language": "ja",
+      "original_title": "SHOGUN’S NINJA-将軍乃忍者-",
+      "overview": "New jidai-geki directed by Koichi Sakamoto about two ninja girls.",
+      "popularity": 15.121,
+      "poster_path": null,
+      "release_date": "2025-03-20",
+      "title": "Shogun's Ninja",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/7yUlZn4gT4k2Ww2QAPL7ZpIUo77.jpg",
+      "genre_ids": [
+        16,
+        35
+      ],
+      "id": 1438069,
+      "original_language": "it",
+      "original_title": "Famiglia Imbarazzi - La maledizione dello zoccolo",
+      "overview": "",
+      "popularity": 15.121,
+      "poster_path": "/2R988fuafYeyCLWhHqjUkbbwXxW.jpg",
+      "release_date": "2025-03-20",
+      "title": "Famiglia Imbarazzi - La maledizione dello zoccolo",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/eWagRVP6AfExgHKoMjxewtHnisq.jpg",
+      "genre_ids": [
+        35
+      ],
+      "id": 1436815,
+      "original_language": "tr",
+      "original_title": "Oy'una Geldik",
+      "overview": "",
+      "popularity": 15.121,
+      "poster_path": "/9qgM8QQS03PrkUqlWpmLrKO30TY.jpg",
+      "release_date": "2025-03-20",
+      "title": "Oy'una Geldik",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/isE96P2QoUEE0lCyjCjzRmIhN5G.jpg",
+      "genre_ids": [],
+      "id": 1436704,
+      "original_language": "en",
+      "original_title": "Please Carry On",
+      "overview": "The neighbours next-door have loud and hot sex. Catherine, an introverted data analyst who lives alone, is deeply involved.",
+      "popularity": 15.121,
+      "poster_path": "/1g1lCMq33LMN2BvMptB0sxK5opB.jpg",
+      "release_date": "2025-03-20",
+      "title": "Please Carry On",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [],
+      "id": 1436703,
+      "original_language": "es",
+      "original_title": "Es la reducción mínima del abismo",
+      "overview": "Inspired by a poem by Cristina Peri Rossi, this intimate film explores the distance that can only exist between lovers.",
+      "popularity": 15.121,
+      "poster_path": "/ierytA5qnCa0Qv4nnW7FYiL019P.jpg",
+      "release_date": "2025-03-20",
+      "title": "It's the Minimum Reduction of the Abyss",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/qvVPlk0s8L2OA0AgVuBypoF0CWI.jpg",
+      "genre_ids": [],
+      "id": 1436621,
+      "original_language": "en",
+      "original_title": "Wait, Wait, Now!",
+      "overview": "A Maori and a Kiwi teen buddy up to raid their mum’s wardrobe and pucker their lips with red.",
+      "popularity": 15.121,
+      "poster_path": "/mumYuKlMHGDqnuCMWPY2TPsy8IH.jpg",
+      "release_date": "2025-03-20",
+      "title": "Wait, Wait, Now!",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/nhYPnzX8U6oQFghyujqaBhIMAPC.jpg",
+      "genre_ids": [
+        18,
+        10749
+      ],
+      "id": 1436366,
+      "original_language": "bn",
+      "original_title": "Jasmine That Blooms in Autumn",
+      "overview": "Love blossoms secretly between two old women at an elderly care home while the specter of patriarchy looms large overhead.",
+      "popularity": 15.12,
+      "poster_path": "/34ctQQDeeAyOJqTxQl0ECWFiAnu.jpg",
+      "release_date": "2025-03-20",
+      "title": "Jasmine That Blooms in Autumn",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/hgf7hhxLboQINHFDvh0ouOigYyA.jpg",
+      "genre_ids": [
+        99
+      ],
+      "id": 1435053,
+      "original_language": "es",
+      "original_title": "Metropia",
+      "overview": "",
+      "popularity": 15.12,
+      "poster_path": "/zi2x5l8oZbz1KTYbFEozVXBEkJm.jpg",
+      "release_date": "2025-03-20",
+      "title": "Metropia",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/caMy1Wgb5yQ24gVMAmDpTEMlRTa.jpg",
+      "genre_ids": [
+        18
+      ],
+      "id": 1434672,
+      "original_language": "en",
+      "original_title": "National Theatre Live: The Other Place",
+      "overview": "Two sisters reunite on the anniversary of the death of their father. Their uncle has remodelled their family home, in an attempt at a fresh start. But one sister’s sudden reappearance threatens to shatter this fragile idyll as she demands justice for the pain she carries.Amid the debris and the new extension, guilt, grief and greed battle it out in the family’s competing dreams of their future. When we are faced with the suffering of others, even those closest to us, can we look away?",
+      "popularity": 15.12,
+      "poster_path": "/6IHn9ciEnDFtjSrFRsSTc3AwtNx.jpg",
+      "release_date": "2025-03-20",
+      "title": "National Theatre Live: The Other Place",
+      "video": false,
+      "vote_average": 10,
+      "vote_count": 1
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/jtajFmU8A50Z5u0KpyttY215f1.jpg",
+      "genre_ids": [
+        18
+      ],
+      "id": 1432480,
+      "original_language": "es",
+      "original_title": "Aqu& No Más",
+      "overview": "",
+      "popularity": 15.117,
+      "poster_path": "/cUtXSXXj1hKOUQeicCtNMfh2cZ6.jpg",
+      "release_date": "2025-03-20",
+      "title": "Aqu& No Más",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/1QeDSpZMRZ5t3W1UHRbXu3umsDC.jpg",
+      "genre_ids": [
+        10402
+      ],
+      "id": 1429460,
+      "original_language": "en",
+      "original_title": "Imagine Dragons: Live From The Hollywood Bowl (with the LA Film Orchestra)",
+      "overview": "Globally renowned, GRAMMY® Award-winning band Imagine Dragons enlisted the LA Film Orchestra to perform their biggest hits and new chart-topping songs against the backdrop of the iconic Hollywood Bowl. The band fuses their explosive, cathartic sound with gorgeous, intricate symphonic arrangements played on stage by over 50 musicians.",
+      "popularity": 15.113,
+      "poster_path": "/e72fYes91e8En7jREXeHSXP9U0S.jpg",
+      "release_date": "2025-03-20",
+      "title": "Imagine Dragons: Live From The Hollywood Bowl (with the LA Film Orchestra)",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        99
+      ],
+      "id": 1428507,
+      "original_language": "pt",
+      "original_title": "Oroboro",
+      "overview": "",
+      "popularity": 15.113,
+      "poster_path": null,
+      "release_date": "2025-03-20",
+      "title": "Oroboro",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    }
+  ],
+  "total_pages": 49259,
+  "total_results": 985162
+}
