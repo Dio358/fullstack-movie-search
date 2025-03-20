@@ -31,3 +31,9 @@ testpaths = ["ds_webapp/tests"]
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = ["W0621"]
+
+[tool.pylint."FORMAT"]
+disable = ["C0301"]
+
+[tool.pylint."TYPECHECK"]
+generated-members = ["numpy.*", "torch.*"]

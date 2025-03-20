@@ -1,10 +1,18 @@
+"""
+A file containing pydantic type schemas
+"""
+
 from datetime import date
 from typing import List, Optional
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 
 
 class Movie(BaseModel):
+    """
+    A model representing a movie
+    """
+
     adult: bool
     backdrop_path: Optional[str]
     genre_ids: List[int]
@@ -19,5 +27,3 @@ class Movie(BaseModel):
     video: bool
     vote_average: float
     vote_count: int
-
-
