@@ -5,11 +5,14 @@ A file containing text fixtures
 import json
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 import pytest
 
 from ds_webapp.app import app
 from ds_webapp.consume_api.schemas import Movie
+
+load_dotenv()
 
 
 @pytest.fixture
