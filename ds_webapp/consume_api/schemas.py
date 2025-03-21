@@ -22,8 +22,13 @@ class Movie(BaseModel):
     overview: str
     popularity: float
     poster_path: Optional[str]
-    release_date: date
+    release_date: Optional[date]
     title: str
     video: bool
     vote_average: float
     vote_count: int
+
+
+class Genre(BaseModel):
+    id: int
+    name: str

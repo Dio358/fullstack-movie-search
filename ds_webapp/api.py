@@ -3,7 +3,7 @@ A file containing the app's api
 """
 
 from flasgger import swag_from
-from flask import Response
+from flask import Response, jsonify
 from flask_restful import Resource, Api
 from ds_webapp.consume_api.consume_api import get_movies_list
 
@@ -122,7 +122,7 @@ class MostPopular(Movies):
                 {"error": "Invalid value for 'n'. It should be between 1 and 20."}, 400
             )
 
-        return get_movies_list(n)
+        return jsonify(get_movies_list(n))
 
 
 def add_endpoints(api: Api) -> None:
