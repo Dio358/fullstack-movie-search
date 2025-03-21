@@ -3,21 +3,18 @@ A file containing methods that call The Movie Database API
 """
 
 import os
-from typing import List, Any, Dict, Tuple
+from typing import Any
 
 import requests
-from flask import jsonify, Response
-from flask.cli import load_dotenv
 
+from ds_webapp.consume_api.schemas import Movie
 from ds_webapp.consume_api.utils import (
     create_movie_list,
     clean_data,
     create_ranked_movie_list,
     take_genre_set_difference,
 )
-from ds_webapp.consume_api.schemas import Movie
 
-load_dotenv()
 # setting API url and key
 API_URL = os.getenv("API_URL")
 API_KEY = os.getenv("API_KEY")
@@ -47,10 +44,7 @@ def get_movies_list(n: int) -> list[Any] | tuple[dict[str, str], int]:
             length=n,
         )
 
-    return (
-        {"error": str(response.status_code), "message": response.text},
-        response.status_code,
-    )
+    raise response
 
 
 def search_movie(title: str) -> list[Any] | tuple[dict[str, str], int]:
@@ -75,10 +69,7 @@ def search_movie(title: str) -> list[Any] | tuple[dict[str, str], int]:
             movie_list=[Movie.model_validate(movie) for movie in results]
         )
 
-    return {
-        "error": str(response.status_code),
-        "message": response.text,
-    }, response.status_code
+    raise (response)
 
 
 def search_movies_with_genres(
@@ -110,10 +101,7 @@ def search_movies_with_genres(
             movie_list=[Movie.model_validate(movie) for movie in results],
         )
 
-    return (
-        {"error": str(response.status_code), "message": response.text},
-        response.status_code,
-    )
+    raise (response)
 
 
 def get_movie_genres() -> list[Any] | tuple[dict[str, str], int]:
@@ -135,10 +123,7 @@ def get_movie_genres() -> list[Any] | tuple[dict[str, str], int]:
     if response.status_code == 200:
         return results
 
-    return (
-        {"error": str(response.status_code), "message": response.text},
-        response.status_code,
-    )
+    raise (response)
 
 
 if __name__ == "__main__":
