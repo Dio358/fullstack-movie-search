@@ -15,6 +15,7 @@ class Welcome(Resource):
 
     @swag_from(
         {
+            "tags": ["Welcome"],
             "responses": {
                 200: {
                     "description": "A status code 200 means successful and returns a message.",
@@ -24,7 +25,7 @@ class Welcome(Resource):
                         }
                     },
                 }
-            }
+            },
         }
     )
     def get(self) -> Response:
@@ -45,6 +46,7 @@ class Movies(Resource):
 
     @swag_from(
         {
+            "tags": ["Movies"],
             "responses": {
                 200: {
                     "description": "A status code 200 means successful and returns a message.",
@@ -54,7 +56,7 @@ class Movies(Resource):
                         }
                     },
                 }
-            }
+            },
         }
     )
     def get(self) -> Response:
@@ -75,6 +77,7 @@ class MostPopular(Movies):
 
     @swag_from(
         {
+            "tags": ["Movies"],
             "parameters": [
                 {
                     "name": "n",
