@@ -14,6 +14,8 @@ from ds_webapp.consume_api.consume_api import (
     get_movie_genres,
     search_movie,
     search_movies_with_genres,
+    get_movie_details,
+    search_movies_with_duration,
 )
 from ds_webapp.consume_api.utils import take_genre_set_difference
 
@@ -234,6 +236,94 @@ class MoviesWithSameGenres(Movies):
             return {"error": "Internal server error"}, 500
 
 
+class MoviesWithSimilarRuntime(Movies):
+    """
+    A class to send requests relates to movies with similar runtimes
+    """
+
+    @swag_from(
+        {
+            "tags": ["Movies"],
+            "parameters": [
+                {
+                    "name": "movie",
+                    "in": "path",
+                    "type": "string",
+                    "required": True,
+                    "description": "The title of the movie to find similar genre matches for.",
+                }
+            ],
+            "responses": {
+                200: {
+                    "description": "Returns a list of movies with the same genres as the input movie.",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "example1": {
+                                    "summary": "Successful response",
+                                    "value": [
+                                        {"title": "Movie 1"},
+                                        {"title": "Movie 2"},
+                                    ],
+                                }
+                            }
+                        }
+                    },
+                },
+                400: {
+                    "description": "Invalid input value.",
+                },
+                404: {
+                    "description": "Not found.",
+                },
+                500: {
+                    "description": "Internal server error.",
+                },
+            },
+        }
+    )
+    def get(
+        self, movie: str
+    ) -> Tuple[List[Any], int] | Tuple[Dict[str, str], int] | Tuple[str, int]:
+        """
+        Given a movie, returns movies with a similar runtime (+- 10 minutes).
+
+        :param movie: Title of the movie to search by.
+        :return:
+            - 200 OK with list of matching movies
+            - 404 Not Found if the movie does not exist
+            - 500 Internal Server Error for unexpected failures
+        """
+        try:
+            search_result = search_movie(movie)
+
+            if not search_result:
+                return {"error": "Not Found."}, 404
+
+            movie_id = search_result[0].get("id")
+            assert movie_id is not None, "Unknown movie_id"
+
+            detailed_search_result = get_movie_details(movie_id)
+
+            if not detailed_search_result:
+                return {"error": "Not Found."}, 404
+
+            duration = detailed_search_result.get("runtime")
+            assert duration is not None, "Movie duration not found"
+
+            result = search_movies_with_duration(
+                min_duration=duration - 10, max_duration=duration + 10
+            )
+            assert result is not None, "Movies with similar duration not found"
+
+            return result, 200
+
+        except HTTPException as e:
+            return e
+        except Exception as e:
+            return {"error": "Internal server error"}, 500
+
+
 def add_endpoints(api: Api) -> None:
     """
     Adds endpoints to the application's RESTful API.
@@ -246,6 +336,7 @@ def add_endpoints(api: Api) -> None:
         MostPopular, "/movies/most_popular", "/movies/most_popular/<int:n>"
     )
     api.add_resource(MoviesWithSameGenres, "/movies/same_genres/<string:movie>")
+    api.add_resource(MoviesWithSimilarRuntime, "/movies/similar_runtime/<string:movie>")
 
 
 if __name__ == "__main__":

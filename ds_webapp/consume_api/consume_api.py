@@ -108,7 +108,7 @@ def get_movie_genres() -> list[Any] | tuple[dict[str, str], int]:
     raise response
 
 
-def get_movie_details(movie_id: int) -> list[dict[str, int | str | None]]:
+def get_movie_details(movie_id: int) -> dict[str, int | str | None]:
     """
     Get detail info about movie from movie_db
     :param movie_id: unique id of movie
