@@ -2,33 +2,22 @@
 A file containing pydantic type schemas
 """
 
-from datetime import date
-from typing import List, Optional
-
+from typing import Optional, List
 from pydantic import BaseModel
 
 
 class Movie(BaseModel):
-    """
-    A model representing a movie
-    """
-
     adult: bool
-    backdrop_path: Optional[str]
-    genre_ids: List[int]
+    backdrop_path: Optional[str] = None
+    genre_ids: Optional[List[int]] = None
     id: int
     original_language: str
     original_title: str
-    overview: str
-    popularity: float
-    poster_path: Optional[str]
-    release_date: Optional[date]
+    overview: Optional[str] = None
+    popularity: Optional[float] = None
+    poster_path: Optional[str] = None
+    release_date: Optional[str] = None
     title: str
-    video: bool
-    vote_average: float
-    vote_count: int
-
-
-class Genre(BaseModel):
-    id: int
-    name: str
+    video: Optional[bool] = None
+    vote_average: Optional[float] = None
+    vote_count: Optional[int] = None

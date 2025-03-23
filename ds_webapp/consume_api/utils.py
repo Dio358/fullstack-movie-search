@@ -2,21 +2,20 @@
 A file with utils to create and parse responses
 """
 
-from ds_webapp.consume_api.schemas import Movie, Genre
+from ds_webapp.consume_api.schemas import Movie
 
 
 def clean_data(
-    results: list[dict[str : int | str]],
-) -> list[dict[str : int | str | None]]:
+    results: list[dict[str, int | str]],
+) -> list[dict[str, int | str | None]]:
     """
-    Clean movie data, replace "" release data with None
+    Clean movie data, replace "" release date with None
     :param results: JSON of movie results
-    :return:
+    :return: Cleaned list of movie dicts
     """
-    for i in range(len(results)):
-        if results[i]["release_date"] == "":
-            results[i]["release_date"] = None
-
+    for result in results:
+        if result.get("release_date") == "":
+            result["release_date"] = None
     return results
 
 

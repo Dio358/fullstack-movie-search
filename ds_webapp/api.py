@@ -10,7 +10,7 @@ from flask import Response
 from flask_restful import Resource, Api
 
 from ds_webapp.consume_api.consume_api import (
-    get_movies_list,
+    get_popular_movies,
     get_movie_genres,
     search_movie,
     search_movies_with_genres,
@@ -145,7 +145,7 @@ class MostPopular(Movies):
                     "error": "Invalid value for 'n'. It should be between 1 and 20."
                 }, 400
 
-            return get_movies_list(n), 200
+            return get_popular_movies()[:n], 200
         except HTTPException as e:
             return e
         except Exception as e:
@@ -217,7 +217,9 @@ class MoviesWithSameGenres(Movies):
             if not search_result:
                 return {"error": "Not Found."}, 404
 
-            genres_to_include = search_result[0]["genre_ids"]
+            genres_to_include = search_result[0].get("genre_ids")
+            assert genres is not None, "No genres found"
+
             genres_to_exclude = take_genre_set_difference(genres, genres_to_include)
 
             movies = search_movies_with_genres(
@@ -247,8 +249,28 @@ def add_endpoints(api: Api) -> None:
 
 
 if __name__ == "__main__":
-    movie = "zvkjlrz"
+    movie = "Harry Potter"
     search_result = search_movie(movie)
     print(search_result)
+    print(len(search_result))
     if len(search_result) == 0:
         print("No movie found")
+
+    # genres = get_movie_genres()
+    # search_result = search_movie("Harry Potter and the Philosopher's Stone")
+    #
+    # if not search_result:
+    #     print("error: Not Found.", 404)
+    #     exit(1)
+    #
+    # genres_to_include = search_result[0].get("genre_ids")
+    # assert genres is not None, "No genres found"
+    #
+    # genres_to_exclude = take_genre_set_difference(genres, genres_to_include)
+    #
+    # movies = search_movies_with_genres(
+    #     ",".join(str(id) for id in genres_to_include),
+    #     ",".join(str(id) for id in genres_to_exclude),
+    # )
+    #
+    # print(movies)
