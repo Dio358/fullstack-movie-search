@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS favorites (
-    movie_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    age INTEGER
+    movie_id INT,
+    user_id INT REFERENCES users(id),
+    PRIMARY KEY(movie_id, user_id)
 );

@@ -11,6 +11,7 @@ import pytest
 
 from ds_webapp.app import app
 from ds_webapp.consume_api.schemas import Movie
+from ds_webapp.database.connect import Database
 
 load_dotenv()
 
@@ -50,3 +51,14 @@ def api_key() -> str:
     Load API Key from .env file
     """
     yield os.getenv("API_KEY")
+
+
+@pytest.fixture
+def db():
+    """
+    returns database instance
+    """
+    db = Database()
+    yield db
+    db.close()
+
