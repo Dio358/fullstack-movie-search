@@ -34,5 +34,11 @@ app.config["SWAGGER"] = {
 swagger = Swagger(app)
 ds_webapp.api.add_endpoints(api)
 
+def start():
+    """
+    Start Application
+    """
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    start()

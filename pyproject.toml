@@ -17,6 +17,9 @@ responses = "^0.25.7"
 pydantic = "^2.10.6"
 psycopg2-binary = "^2.9.10"
 
+[tool.poetry.scripts]
+app = "ds_webapp.app:start"
+
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
