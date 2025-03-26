@@ -88,7 +88,7 @@ class Movies(Resource):
         )
 
 
-class MostPopular(Movies):
+class MostPopular(Resource):
     """
     A class to send requests related to the most popular movies.
     """
@@ -150,11 +150,13 @@ class MostPopular(Movies):
             return get_popular_movies()[:n], 200
         except HTTPException as e:
             return e
+        # pylint: disable=locally-disabled, broad-exception-caught
         except Exception as e:
+            print("exception: ", e)
             return {"error": "Internal server error"}, 500
 
 
-class MoviesWithSameGenres(Movies):
+class MoviesWithSameGenres(Resource):
     """
     A class to send requests related to movies with the same genres.
     """
@@ -232,11 +234,13 @@ class MoviesWithSameGenres(Movies):
 
         except HTTPException as e:
             return e
+        # pylint: disable=locally-disabled, broad-exception-caught
         except Exception as e:
+            print("exception: ", e)
             return {"error": "Internal server error"}, 500
 
 
-class MoviesWithSimilarRuntime(Movies):
+class MoviesWithSimilarRuntime(Resource):
     """
     A class to send requests relates to movies with similar runtimes
     """
@@ -320,7 +324,9 @@ class MoviesWithSimilarRuntime(Movies):
 
         except HTTPException as e:
             return e
+        # pylint: disable=locally-disabled, broad-exception-caught
         except Exception as e:
+            print("error:", e)
             return {"error": "Internal server error"}, 500
 
 
@@ -340,8 +346,8 @@ def add_endpoints(api: Api) -> None:
 
 
 if __name__ == "__main__":
-    movie = "Harry Potter"
-    search_result = search_movie(movie)
+    MOVIE = "Harry Potter"
+    search_result = search_movie(MOVIE)
     print(search_result)
     print(len(search_result))
     if len(search_result) == 0:
