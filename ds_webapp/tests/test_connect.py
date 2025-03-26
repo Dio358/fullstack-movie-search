@@ -7,21 +7,36 @@ def test_connection(db: Database):
     """
     A function to test the database connection
     """
-    sql = """
+    sql_create = """
         CREATE TABLE IF NOT EXISTS test_users (
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         password TEXT
         );
-        """
-    result = db.query(sql, [])
-    assert result == "NOT FOUND"
+    """
+    sql_drop = "DROP TABLE IF EXISTS test_users;"
+
+    try:
+        result = db.query(sql=sql_create, params=[])
+        assert result == "NOT FOUND"
+    finally:
+        db.query(sql=sql_drop, params=[])
 
 def test_insert(db: Database):
     """
     A function to test the database connection
     """
     try:
+        sql_create = """
+        CREATE TABLE IF NOT EXISTS test_users (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        password TEXT
+        );
+        """
+        result = db.query(sql=sql_create, params=[])
+        assert result == "NOT FOUND"
+
         insert = """
             INSERT INTO test_users(id, name, password) VALUES (%s, %s, %s);
             """
@@ -44,4 +59,6 @@ def test_insert(db: Database):
         assert tuple(insert_params) not in select_result_after_delete
 
     finally:
+        sql_drop = "DROP TABLE IF EXISTS test_users;"
+        db.query(sql=sql_drop, params=[])
         db.rollback()
