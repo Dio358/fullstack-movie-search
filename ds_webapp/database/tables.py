@@ -40,6 +40,8 @@ class Users:
         sql = "SELECT * FROM users WHERE username = $1"
         search_result = await self.db.query(sql=sql, params=[username])
 
+        if not search_result:
+            return False
         for user in search_result:
             if Hasher.verify_password(
                 hashed_password=user["password"].encode("utf-8"),
@@ -62,7 +64,7 @@ class Users:
                  DELETE FROM users
                  WHERE id = $1;
                 """
-        await self.db.query(sql=delete, params=[user_id])
+        return await self.db.query(sql=delete, params=[user_id])
 
 
 class Hasher:
@@ -105,7 +107,7 @@ class Favorites:
         sql = f"""INSERT INTO favorites({self.columns})
                   VALUES($1, $2);"""
         params = [movie_id, user_id]
-        await self.db.query(sql=sql, params=params)
+        return await self.db.query(sql=sql, params=params)
 
     async def unlike_movie(self, movie_id: int, user_id: int) -> None:
         """
@@ -115,7 +117,7 @@ class Favorites:
                 DELETE FROM favorites
                 WHERE movie_id = $1 AND user_id = $2;
               """
-        await self.db.query(sql=sql, params=[movie_id, user_id])
+        return await self.db.query(sql=sql, params=[movie_id, user_id])
 
     async def get_favorites(self, user_id: int) -> list[dict]:
         """

@@ -9,12 +9,30 @@ from dotenv import load_dotenv
 
 import pytest
 import pytest_asyncio
+from flask import Flask, jsonify
+
 
 from ds_webapp.app import app
 from ds_webapp.consume_api.schemas import Movie
 from ds_webapp.database.connect import Database
+from ds_webapp.authentication.authentication import jwt_required
 
 load_dotenv()
+
+
+@pytest.fixture
+def test_app():
+    """
+    Fixture to provide a Flask test app with a protected route
+    """
+    test_app = Flask(__name__)
+
+    @test_app.route("/protected")
+    @jwt_required
+    def protected():
+        return jsonify({"message": "Access granted"}), 200
+
+    return test_app
 
 
 @pytest.fixture

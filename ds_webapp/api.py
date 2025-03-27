@@ -8,9 +8,11 @@ import asyncio
 
 import asyncpg
 from flasgger import swag_from
-from flask import Response
+from flask import Response, jsonify, request
 from flask_restful import Resource, Api, reqparse
 
+
+from ds_webapp.authentication.authentication import create_jwt_token, jwt_required
 from ds_webapp.consume_api.consume_api import (
     get_popular_movies,
     get_movie_genres,
@@ -21,7 +23,7 @@ from ds_webapp.consume_api.consume_api import (
 )
 from ds_webapp.consume_api.utils import take_genre_set_difference
 from ds_webapp.database.connect import Database
-from ds_webapp.database.tables import Users
+from ds_webapp.database.tables import Favorites, Users
 
 db = Database()
 
@@ -34,29 +36,30 @@ class Welcome(Resource):
     @swag_from(
         {
             "tags": ["Welcome"],
+            "security": [{"BearerAuth": []}],
             "responses": {
                 200: {
                     "description": "A status code 200 means successful and returns a message.",
                     "content": {
                         "application/json": {
-                            "message": "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
+                            "example": {
+                                "message": "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
+                            }
                         }
                     },
                 }
             },
         }
     )
-    def get(self) -> Response:
+    @jwt_required
+    def get(self):
         """
         Returns a welcome message.
-
-        :return: 200 OK with a welcome message.
         """
-        return Response(
+        return jsonify(
             {
-                "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
-            },
-            200,
+                "message": "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
+            }
         )
 
 
@@ -68,6 +71,7 @@ class Movies(Resource):
     @swag_from(
         {
             "tags": ["Movies"],
+            "security": [{"BearerAuth": []}],
             "responses": {
                 200: {
                     "description": "Returns a welcome message from the Movies endpoint.",
@@ -80,6 +84,7 @@ class Movies(Resource):
             },
         }
     )
+    @jwt_required
     def get(self) -> Response:
         """
         Returns a welcome message from the Movies endpoint.
@@ -102,6 +107,7 @@ class MostPopular(Resource):
     @swag_from(
         {
             "tags": ["Movies"],
+            "security": [{"BearerAuth": []}],
             "parameters": [
                 {
                     "name": "n",
@@ -137,6 +143,7 @@ class MostPopular(Resource):
             },
         }
     )
+    @jwt_required
     def get(self, n: int = 1) -> Tuple[List[Any], int] | Tuple[Dict[str, str], int]:
         """
         Returns a list of the n most popular movies.
@@ -170,6 +177,7 @@ class MoviesWithSameGenres(Resource):
     @swag_from(
         {
             "tags": ["Movies"],
+            "security": [{"BearerAuth": []}],
             "parameters": [
                 {
                     "name": "movie",
@@ -208,6 +216,7 @@ class MoviesWithSameGenres(Resource):
             },
         }
     )
+    @jwt_required
     def get(
         self, movie: str
     ) -> Tuple[List[Any], int] | Tuple[Dict[str, str], int] | Tuple[str, int]:
@@ -254,6 +263,7 @@ class MoviesWithSimilarRuntime(Resource):
     @swag_from(
         {
             "tags": ["Movies"],
+            "security": [{"BearerAuth": []}],
             "parameters": [
                 {
                     "name": "movie",
@@ -292,6 +302,7 @@ class MoviesWithSimilarRuntime(Resource):
             },
         }
     )
+    @jwt_required
     def get(
         self, movie: str
     ) -> Tuple[List[Any], int] | Tuple[Dict[str, str], int] | Tuple[str, int]:
@@ -342,7 +353,6 @@ class CreateUser(Resource):
     """
 
     def __init__(self):
-        # Set up request parsing
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument(
             "username",
@@ -413,6 +423,220 @@ class CreateUser(Resource):
             return {"error": f"User creation failed: {e}"}, 500
 
 
+class Login(Resource):
+    """
+    A class that handles user creation
+    """
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument(
+            "username",
+            type=str,
+            required=True,
+            help="Username is required",
+            location="json",
+        )
+        self.reqparse.add_argument(
+            "password",
+            type=str,
+            required=True,
+            help="Password is required",
+            location="json",
+        )
+        super(Login, self).__init__()
+
+    @swag_from(
+        {
+            "tags": ["Login"],
+            "parameters": [
+                {
+                    "name": "body",
+                    "in": "body",
+                    "required": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "username": {"type": "string"},
+                            "password": {"type": "string"},
+                        },
+                        "required": ["username", "password"],
+                    },
+                }
+            ],
+            "responses": {
+                200: {"description": "login successfull"},
+                400: {"description": "Invalid input"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
+    def post(self):
+        """
+        A function to send a post request to log in
+        """
+        args = self.reqparse.parse_args()
+        username = args["username"]
+        password = args["password"]
+        user_table = Users(db=db)
+
+        async def login():
+            return await user_table.get_user_id(username=username, password=password)
+
+        try:
+            uid = async_request(login)
+            if uid:
+                token = create_jwt_token(
+                    {
+                        "user_id": uid,
+                        "username": "JohnDoe123",
+                    }
+                )
+                return {"message": f"login successful! Access token: {token}"}, 200
+
+            return {"error": "Unathorized"}, 401
+        except Exception as e:
+            print(f"Internal error: {e}")
+            return {"error": "Internal server error."}, 500
+
+
+class FavoriteMovies(Resource):
+    """
+    Get the list of favorite movies for the authenticated user
+    """
+
+    @swag_from(
+        {
+            "tags": ["Favorites"],
+            "security": [{"BearerAuth": []}],
+            "summary": "Get user's favorite movies",
+            "description": "Retrieve a list of movies marked as favorites by the authenticated user",
+            "responses": {
+                200: {
+                    "description": "Successfully retrieved favorite movies",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "favorites": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "movie_id": {"type": "integer"},
+                                        "title": {"type": "string"},
+                                        "genre": {"type": "string"},
+                                        "added_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                        },
+                                    },
+                                },
+                            }
+                        },
+                    },
+                },
+                401: {"description": "Unauthorized - Invalid or missing JWT token"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
+    @jwt_required
+    def get(self):
+        user_id = request.user["user_id"]
+        favorites_table = Favorites(db=db)
+
+        async def get_favorites():
+            return await favorites_table.get_favorites(user_id=user_id)
+
+        try:
+            return async_request(get_favorites), 200
+        except Exception:
+            return {"message": "Internal server error"}, 500
+
+
+class AddFavorite(Resource):
+    @swag_from(
+        {
+            "tags": ["Favorites"],
+            "security": [{"BearerAuth": []}],
+            "summary": "Add a movie to favorites",
+            "description": "Add a specific movie to the user's favorites list",
+            "parameters": [
+                {
+                    "name": "movie_id",
+                    "in": "path",
+                    "type": "integer",
+                    "required": True,
+                    "description": "Unique identifier of the movie to add",
+                }
+            ],
+            "responses": {
+                201: {"description": "Movie successfully added to favorites"},
+                401: {"description": "Unauthorized - Invalid or missing JWT token"},
+                409: {"description": "Movie already exists in favorites"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
+    @jwt_required
+    def post(self, movie_id):
+        user_id = request.user["user_id"]
+        favorites_table = Favorites(db=db)
+
+        async def like_movie():
+            return await favorites_table.like_movie(user_id=user_id, movie_id=movie_id)
+
+        try:
+            async_request(like_movie)
+            return {"message": "OK"}, 201
+        except Exception:
+            return {"message": "Internal server error"}, 500
+
+
+class RemoveFavorite(Resource):
+    @swag_from(
+        {
+            "tags": ["Favorites"],
+            "security": [{"BearerAuth": []}],
+            "summary": "Remove a movie from favorites",
+            "description": "Delete a specific movie from the user's favorites list",
+            "parameters": [
+                {
+                    "name": "movie_id",
+                    "in": "path",
+                    "type": "integer",
+                    "required": True,
+                    "description": "Unique identifier of the movie to remove",
+                }
+            ],
+            "responses": {
+                200: {"description": "Movie successfully removed from favorites"},
+                401: {"description": "Unauthorized - Invalid or missing JWT token"},
+                404: {"description": "Movie not found in favorites"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
+    @jwt_required
+    def delete(self, movie_id):
+        user_id = request.user["user_id"]
+        favorites_table = Favorites(db=db)
+
+        async def unlike_movie():
+            return await favorites_table.unlike_movie(
+                user_id=user_id, movie_id=movie_id
+            )
+
+        try:
+            async_request(unlike_movie)
+            return {
+                "message": "OK",
+                "movie_id": movie_id,
+            }, 200
+        except Exception:
+            return {"message": "Internal server error"}, 500
+
+
 def async_request(async_function):
     """
     A function to send async requests in sync functions
@@ -422,18 +646,6 @@ def async_request(async_function):
     result = loop.run_until_complete(async_function())
     loop.close()
     return result
-
-
-class FavoriteMovies(Resource):
-    """
-    A class send requests involving favorite movies
-    """
-
-    def get(self):
-        """
-        A function to favorite movies
-        """
-        pass
 
 
 def add_endpoints(api: Api) -> None:
@@ -450,6 +662,10 @@ def add_endpoints(api: Api) -> None:
     api.add_resource(MoviesWithSameGenres, "/movies/same_genres/<string:movie>")
     api.add_resource(MoviesWithSimilarRuntime, "/movies/similar_runtime/<string:movie>")
     api.add_resource(CreateUser, "/users")
+    api.add_resource(Login, "/login")
+    api.add_resource(FavoriteMovies, "/movies/favorite")
+    api.add_resource(AddFavorite, "/movies/favorite/<int:movie_id>")
+    api.add_resource(RemoveFavorite, "/movies/favorite/<int:movie_id>")
 
 
 if __name__ == "__main__":
