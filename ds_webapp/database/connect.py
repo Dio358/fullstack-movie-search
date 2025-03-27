@@ -11,13 +11,13 @@ class Database:
     A class for interacting with a PostgreSQL database using asyncpg.
     """
 
-    def __init__(self, max_retries=2, retry_delay=1, debug_mode=False):
+    def __init__(self, debug_mode=False):
         """
         Initialize parameters
         """
         self.conn = None
-        self.max_retries = max_retries
-        self.retry_delay = retry_delay
+        self.max_retries = 2
+        self.retry_delay = 1
         self.debug_mode = debug_mode
 
     async def connect(self):
@@ -27,16 +27,16 @@ class Database:
         for attempt in range(self.max_retries):
             try:
                 self.conn = await asyncpg.connect(
-                    user=os.getenv("POSTGRES_USER", "pgres"),
-                    password=os.getenv("POSTGRES_PASSWORD", "pgres"),
-                    database=os.getenv("POSTGRES_DB", "pgres"),
-                    host=os.getenv("POSTGRES_HOST", "db"),
+                    user=os.getenv("POSTGRES_USER"),
+                    password=os.getenv("POSTGRES_PASSWORD"),
+                    database=os.getenv("POSTGRES_DB"),
+                    host=os.getenv("POSTGRES_HOST"),
                     port=5432,
                     timeout=5.0
                 )
                 print(f"Database connection successful on attempt {attempt + 1}")
                 return
-            except Exception as e:
+            except asyncpg.PostgresConnectionError as e:
                 print(f"Connection attempt {attempt + 1} failed: {e}")
                 if attempt < self.max_retries - 1:
                     await asyncio.sleep(self.retry_delay)
