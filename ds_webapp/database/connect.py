@@ -6,6 +6,7 @@ import os
 import asyncio
 import asyncpg
 
+
 class Database:
     """
     A class for interacting with a PostgreSQL database using asyncpg.
@@ -32,7 +33,7 @@ class Database:
                     database=os.getenv("POSTGRES_DB"),
                     host=os.getenv("POSTGRES_HOST"),
                     port=5432,
-                    timeout=5.0
+                    timeout=5.0,
                 )
                 print(f"Database connection successful on attempt {attempt + 1}")
                 return
@@ -41,7 +42,9 @@ class Database:
                 if attempt < self.max_retries - 1:
                     await asyncio.sleep(self.retry_delay)
                 else:
-                    raise RuntimeError(f"Failed to connect to database after {self.max_retries} attempts")
+                    raise RuntimeError(
+                        f"Failed to connect to database after {self.max_retries} attempts"
+                    )
 
     async def query(self, sql: str, params: list = None):
         """
@@ -53,9 +56,9 @@ class Database:
         try:
             result = await self.conn.fetch(sql, *(params or []))
             return result if result else False
-        except Exception as e:
-            print(f"Database query error: {e}")
-            raise e
+
+        finally:
+            await self.conn.close()
 
     async def close(self):
         """

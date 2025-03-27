@@ -8,6 +8,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 import pytest
+import pytest_asyncio
 
 from ds_webapp.app import app
 from ds_webapp.consume_api.schemas import Movie
@@ -53,12 +54,11 @@ def api_key() -> str:
     yield os.getenv("API_KEY")
 
 
-@pytest.fixture
-def db():
+@pytest_asyncio.fixture
+async def db():
     """
     returns database instance
     """
     db = Database()
     yield db
-    db.close()
-
+    await db.close()

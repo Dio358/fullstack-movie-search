@@ -4,10 +4,12 @@ A file containing the app's API.
 
 from http.client import HTTPException
 from typing import Tuple, List, Any, Dict
+import asyncio
 
+import asyncpg
 from flasgger import swag_from
 from flask import Response
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 
 from ds_webapp.consume_api.consume_api import (
     get_popular_movies,
@@ -18,6 +20,10 @@ from ds_webapp.consume_api.consume_api import (
     search_movies_with_duration,
 )
 from ds_webapp.consume_api.utils import take_genre_set_difference
+from ds_webapp.database.connect import Database
+from ds_webapp.database.tables import Users
+
+db = Database()
 
 
 class Welcome(Resource):
@@ -330,6 +336,106 @@ class MoviesWithSimilarRuntime(Resource):
             return {"error": "Internal server error"}, 500
 
 
+class CreateUser(Resource):
+    """
+    A class that handles user creation
+    """
+
+    def __init__(self):
+        # Set up request parsing
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument(
+            "username",
+            type=str,
+            required=True,
+            help="Username is required",
+            location="json",
+        )
+        self.reqparse.add_argument(
+            "password",
+            type=str,
+            required=True,
+            help="Password is required",
+            location="json",
+        )
+        super(CreateUser, self).__init__()
+
+    @swag_from(
+        {
+            "tags": ["Users"],
+            "parameters": [
+                {
+                    "name": "body",
+                    "in": "body",
+                    "required": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "username": {"type": "string"},
+                            "password": {"type": "string"},
+                        },
+                        "required": ["username", "password"],
+                    },
+                }
+            ],
+            "responses": {
+                200: {"description": "User created successfully"},
+                400: {"description": "Invalid input"},
+                409: {"description": "Username already exists"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
+    def post(self):
+        """
+        A function to send a post request to create a new user
+        """
+        args = self.reqparse.parse_args()
+        username = args["username"]
+        password = args["password"]
+        user_table = Users(db=db)
+
+        async def create_user_async():
+            return await user_table.add_user(username=username, password=password)
+
+        try:
+            result = async_request(create_user_async)
+
+            if result:
+                return {"message": f"User {username} created successfully"}, 200
+            else:
+                return {"error": "Username already exists"}, 409
+
+        except asyncpg.UniqueViolationError:
+            return {"error": "Username already exists"}, 409
+        except Exception as e:
+            print(f"Internal error: {e}")
+            return {"error": f"User creation failed: {e}"}, 500
+
+
+def async_request(async_function):
+    """
+    A function to send async requests in sync functions
+    """
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    result = loop.run_until_complete(async_function())
+    loop.close()
+    return result
+
+
+class FavoriteMovies(Resource):
+    """
+    A class send requests involving favorite movies
+    """
+
+    def get(self):
+        """
+        A function to favorite movies
+        """
+        pass
+
+
 def add_endpoints(api: Api) -> None:
     """
     Adds endpoints to the application's RESTful API.
@@ -343,6 +449,7 @@ def add_endpoints(api: Api) -> None:
     )
     api.add_resource(MoviesWithSameGenres, "/movies/same_genres/<string:movie>")
     api.add_resource(MoviesWithSimilarRuntime, "/movies/similar_runtime/<string:movie>")
+    api.add_resource(CreateUser, "/users")
 
 
 if __name__ == "__main__":

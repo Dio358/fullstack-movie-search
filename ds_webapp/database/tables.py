@@ -10,6 +10,7 @@ class Users:
     """
     A class representing the users(id, username, password)
     """
+
     def __init__(self, db: Database):
         self.columns = "username, password"
         self.db = db
@@ -23,7 +24,7 @@ class Users:
                   RETURNING id;"""
         params = [username, Hasher.hash_password(password)]
         result = await self.db.query(sql=sql, params=params)
-        return result[0]["id"] if result else None
+        return result[0]["id"] if result else False
 
     async def get_user(self, user_id: int):
         """
@@ -68,6 +69,7 @@ class Hasher:
     """
     A class containing hashing methods
     """
+
     @staticmethod
     def hash_password(password: str):
         """
@@ -91,6 +93,7 @@ class Favorites:
     """
     A class representing the favorites (movie_id, user_id)
     """
+
     def __init__(self, db: Database):
         self.columns = "movie_id, user_id"
         self.db = db
