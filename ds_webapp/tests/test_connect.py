@@ -1,12 +1,17 @@
 """
 A file with database connection tests
 """
+import pytest
 from ..database.connect import Database
 
-def test_connection(db: Database):
+@pytest.mark.asyncio
+async def test_connection():
     """
     A function to test the database connection
     """
+    db = Database()
+    await db.connect()
+
     sql_create = """
         CREATE TABLE IF NOT EXISTS test_users (
         id SERIAL PRIMARY KEY,
@@ -17,15 +22,21 @@ def test_connection(db: Database):
     sql_drop = "DROP TABLE IF EXISTS test_users;"
 
     try:
-        result = db.query(sql=sql_create, params=[])
-        assert result == "NOT FOUND"
+        result = await db.query(sql=sql_create, params=[])
+        assert not result
     finally:
-        db.query(sql=sql_drop, params=[])
+        await db.query(sql=sql_drop, params=[])
+        await db.close()
 
-def test_insert(db: Database):
+
+@pytest.mark.asyncio
+async def test_insert():
     """
-    A function to test the database connection
+    A function to test insert and select from the database
     """
+    db = Database()
+    await db.connect()
+
     try:
         sql_create = """
         CREATE TABLE IF NOT EXISTS test_users (
@@ -34,31 +45,35 @@ def test_insert(db: Database):
         password TEXT
         );
         """
-        result = db.query(sql=sql_create, params=[])
-        assert result == "NOT FOUND"
+        result = await db.query(sql=sql_create, params=[])
+        assert not result
 
         insert = """
-            INSERT INTO test_users(id, name, password) VALUES (%s, %s, %s);
+            INSERT INTO test_users(id, name, password) VALUES ($1, $2, $3);
             """
         insert_params = [0, "john doe", "password"]
-        db.query(sql=insert, params=insert_params)
+        await db.query(sql=insert, params=insert_params)
 
         select = """
                     SELECT * from test_users;
                 """
-        select_result = db.query(sql=select, params=[])
-        assert tuple(insert_params) in select_result
+        select_result = await db.query(sql=select, params=[])
+        assert any(
+            row["id"] == 0 and row["name"] == "john doe" and row["password"] == "password"
+            for row in select_result
+        )
 
         delete = """
                     DELETE from test_users
-                    WHERE id = %s;
+                    WHERE id = $1;
                 """
+        await db.query(sql=delete, params=[0])
 
-        db.query(sql=delete, params=[0])
-        select_result_after_delete = db.query(sql=select, params=[])
-        assert tuple(insert_params) not in select_result_after_delete
+        select_result_after_delete = await db.query(sql=select, params=[])
+        print(select_result_after_delete)
+        assert not select_result_after_delete
 
     finally:
         sql_drop = "DROP TABLE IF EXISTS test_users;"
-        db.query(sql=sql_drop, params=[])
-        db.rollback()
+        await db.query(sql=sql_drop, params=[])
+        await db.close()
