@@ -660,7 +660,7 @@ def add_endpoints(api: Api) -> None:
     )
     api.add_resource(MoviesWithSameGenres, "/movies/same_genres/<string:movie>")
     api.add_resource(MoviesWithSimilarRuntime, "/movies/similar_runtime/<string:movie>")
-    api.add_resource(CreateUser, "/users")
+    api.add_resource(CreateUser, "/createUser")
     api.add_resource(Login, "/login")
     api.add_resource(FavoriteMovies, "/movies/favorite")
     api.add_resource(AddFavorite, "/movies/favorite/<int:movie_id>")

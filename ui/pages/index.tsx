@@ -3,13 +3,13 @@ import {useEffect, useState} from "react";
 import LoginBox from "../components/LoginBox";
 import createChartUrl from "../utils/chart";
 import {SideBar} from "../components/sideBar";
-import {DiscoverTab} from "../components/discoverTab";
+import {DiscoverTab} from "../components/DiscoverTab";
 import {FavoritesTab} from "../components/FavoritesTab";
 
 const IndexPage = () => {
   const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [state, setState] = useState(1);
+  const [state, setState] = useState(0);
 
   const movies = [
     { id: 0, title: "Harry Potter", rating: "8.0", release_date: "2023" },
@@ -19,24 +19,43 @@ const IndexPage = () => {
   const [chart, setChart] = useState("");
 
   const logIn = async (userName: string, password: string) => {
-    setState(1)
-    // try {
-    //   const res = await fetch("/api/backend-proxy/login/", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ username: userName, password: password }),
-    //   });
+    try {
+      const res = await fetch("/api/backend-proxy/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: userName, password: password }),
+      });
 
-    //   const data = await res.json();
-    //   console.log("Data from backend:", data);
-    //   setMessage(data.message || JSON.stringify(data));
-    //   setState(1)
-    // } catch (err) {
-    //   console.error("Failed to fetch from backend:", err);
-    //   setMessage("Failed to connect to backend.");
-    // }
+      const data = await res.json();
+      console.log("Data from backend:", data);
+      setMessage(data.message || JSON.stringify(data));
+      setState(1)
+    } catch (err) {
+      console.error("Failed to fetch from backend:", err);
+      setMessage("Failed to connect to backend.");
+    }
+  };
+
+  const createAccount = async (userName: string, password: string) => {
+    try {
+      const res = await fetch("/api/backend-proxy/createUser/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: userName, password: password }),
+      });
+
+      const data = await res.json();
+      console.log("Data from backend:", data);
+      setMessage(data.message || JSON.stringify(data));
+      setState(1)
+    } catch (err) {
+      console.error("Failed to fetch from backend:", err);
+      setMessage("Failed to connect to backend.");
+    }
   };
 
   const logOff = () => {

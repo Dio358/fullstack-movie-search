@@ -3,7 +3,7 @@ import { useState } from "react";
 const LoginBox = ({logIn}) => {
     const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    
+
     return <div style={{ 
         padding: "20px", 
         width: "30vh", 
@@ -29,7 +29,7 @@ const LoginBox = ({logIn}) => {
           onChange={(e) => setPassword(e.target.value)} 
           placeholder="Enter password"
         />
-        <button onClick={logIn}
+        <button onClick={logIn(userName, password)}
             style={{
               marginTop: "15px",
               padding: "10px 20px",

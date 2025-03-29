@@ -1,10 +1,13 @@
 import {useState} from "react";
 import List from "./List";
+import * as React from "react";
 
 export const DiscoverTab = (props: {
     items: ({ id: number; title: string; rating: string; release_date: string }) []
 }) => {
     const [selectedLength, setSelectedLength] = useState(1);
+    const [selectedMovie, setSelectedMovie] = useState(-1);
+    const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
 
     return <div style={{
         display: "flex",
