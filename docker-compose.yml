@@ -27,5 +27,21 @@ services:
       db:
         condition: service_healthy 
     command: ["poetry", "run", "app"]
+    networks:
+      - app-network
+
+  frontend:
+    build: ./ui
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    environment:
+      - BACKEND_URL=http://app:5000
+
+networks:
+  app-network:
+    driver: bridge
 volumes:
   pgdata:

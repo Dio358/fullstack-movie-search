@@ -51,7 +51,6 @@ class Welcome(Resource):
             },
         }
     )
-    @jwt_required
     def get(self):
         """
         Returns a welcome message.
