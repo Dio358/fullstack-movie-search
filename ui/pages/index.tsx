@@ -94,10 +94,10 @@ const IndexPage = () => {
         {state !== 0 && (
           <div style={{
             padding: "20px",
-            width: "70vh",
-            height: "65vh",
+            width: "90vh",
+            height: "80vh",
             background: "rgba(255, 255, 255, 0.26)",
-            borderRadius: "15px",
+            borderRadius: "5px",
             display: "flex",
             flexDirection: "row",
             alignItems: "center"
@@ -114,6 +114,7 @@ const IndexPage = () => {
             )}
           </div>
         )}
+        
       </div>
     </Layout>
   );

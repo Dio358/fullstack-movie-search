@@ -9,7 +9,7 @@ const LoginBox = ({logIn, createAccount, message}) => {
         width: "30vh", 
         height: "25vh",
         background: "rgba(255, 255, 255, 0.9)", 
-        borderRadius: "15px", 
+        borderRadius: "5px", 
         display: "flex", 
         flexDirection: "column", 
         alignItems: "center" 

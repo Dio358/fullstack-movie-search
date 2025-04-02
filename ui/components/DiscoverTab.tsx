@@ -53,7 +53,8 @@ export const DiscoverTab = ({
                 </option>
             ))}
         </select>
-        <List items={movies} action="add to"/>
+        <List items={movies} length={selectedLength} action="add to"/>
+    
 
         <h1 style={{fontFamily: "Arial", textAlign: "center", marginBottom: "20px"}}>Movies in the Same
             Genres</h1>

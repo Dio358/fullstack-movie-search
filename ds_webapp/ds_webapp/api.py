@@ -636,6 +636,66 @@ class RemoveFavorite(Resource):
             return {"message": "Internal server error"}, 500
 
 
+class SearchMovie(Resource):
+    """
+    Search for movies by title using the MovieDB API
+    """
+
+    @swag_from(
+        {
+            "tags": ["Movies"],
+            "security": [{"BearerAuth": []}],
+            "summary": "Search movies by title",
+            "description": "Searches The Movie Database (TMDB) for movies matching the given title.",
+            "parameters": [
+                {
+                    "name": "title",
+                    "in": "path",
+                    "type": "string",
+                    "required": True,
+                    "description": "Title of the movie to search for",
+                }
+            ],
+            "responses": {
+                200: {
+                    "description": "Successfully retrieved movie search results",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "results": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "integer"},
+                                        "title": {"type": "string"},
+                                        "overview": {"type": "string"},
+                                        "release_date": {"type": "string"},
+                                        "vote_average": {"type": "number"},
+                                    },
+                                },
+                            }
+                        },
+                    },
+                },
+                400: {"description": "Missing or invalid title parameter"},
+                401: {"description": "Unauthorized"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
+    @jwt_required
+    def get(self, title: str):
+
+        if not title:
+            return {"message": "Missing 'title' query parameter"}, 400
+        try:
+            results = search_movie(title)
+            return {"results": results}, 200
+        except Exception:
+            return {"message": "Internal server error"}, 500
+
+
 def async_request(async_function):
     """
     A function to send async requests in sync functions
@@ -663,6 +723,7 @@ def add_endpoints(api: Api) -> None:
     api.add_resource(FavoriteMovies, "/movies/favorite")
     api.add_resource(AddFavorite, "/movies/favorite/<int:movie_id>")
     api.add_resource(RemoveFavorite, "/movies/favorite/<int:movie_id>")
+    api.add_resource(SearchMovie, "/movies/search_movie/<string:title>")
 
 
 if __name__ == "__main__":
