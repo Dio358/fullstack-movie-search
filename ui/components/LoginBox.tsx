@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const LoginBox = ({logIn}) => {
+const LoginBox = ({logIn, createAccount, message}) => {
     const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -29,7 +29,8 @@ const LoginBox = ({logIn}) => {
           onChange={(e) => setPassword(e.target.value)} 
           placeholder="Enter password"
         />
-        <button onClick={logIn(userName, password)}
+        {message != "" && <span>{message}</span>}
+        <button onClick={() => logIn(userName, password)}
             style={{
               marginTop: "15px",
               padding: "10px 20px",
@@ -43,7 +44,7 @@ const LoginBox = ({logIn}) => {
           >
             Log in
           </button>
-          <button onClick={() => console.log("Button clicked")}
+          <button onClick={() => createAccount(userName, password)}
             style={{
               marginTop: "15px",
               padding: "10px 20px",

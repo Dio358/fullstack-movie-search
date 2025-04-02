@@ -10,6 +10,7 @@ const IndexPage = () => {
   const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [state, setState] = useState(0);
+  const [token, setToken] = useState("")
 
   const movies = [
     { id: 0, title: "Harry Potter", rating: "8.0", release_date: "2023" },
@@ -18,9 +19,34 @@ const IndexPage = () => {
 
   const [chart, setChart] = useState("");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/backend-proxy/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}), 
+        });
+  
+        const data = await res.json();
+        console.log("Data from backend:", data);
+        setMessage(data.message || JSON.stringify(data));
+        setState(1);
+      } catch (err) {
+        console.error("Failed to fetch from backend:", err);
+        setMessage("Failed to connect to backend.");
+      }
+    };
+  
+    fetchData();
+  }, []); 
+  
+
   const logIn = async (userName: string, password: string) => {
     try {
-      const res = await fetch("/api/backend-proxy/login/", {
+      const res = await fetch("/api/backend-proxy/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,8 +56,14 @@ const IndexPage = () => {
 
       const data = await res.json();
       console.log("Data from backend:", data);
-      setMessage(data.message || JSON.stringify(data));
-      setState(1)
+      
+      if (res.ok){
+        setState(1)
+        setMessage("")
+      } else {
+        setMessage("Login failed")
+        console.log("Response:", data, res.status);
+      }
     } catch (err) {
       console.error("Failed to fetch from backend:", err);
       setMessage("Failed to connect to backend.");
@@ -40,18 +72,28 @@ const IndexPage = () => {
 
   const createAccount = async (userName: string, password: string) => {
     try {
-      const res = await fetch("/api/backend-proxy/createUser/", {
+      const res = await fetch("/api/backend-proxy/createUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username: userName, password: password }),
-      });
-
+      }); 
+      
       const data = await res.json();
-      console.log("Data from backend:", data);
-      setMessage(data.message || JSON.stringify(data));
-      setState(1)
+
+      if (res.ok){
+        setState(1);
+        setMessage("")
+      }
+      else if (res.status == 409){
+        setMessage("UserName exists already")
+      }
+      else{
+        setMessage("An unexpected error occured")
+        console.log("Response:", data, res.status);
+      }
+      
     } catch (err) {
       console.error("Failed to fetch from backend:", err);
       setMessage("Failed to connect to backend.");
@@ -69,7 +111,7 @@ const IndexPage = () => {
   return (
     <Layout title="Home | Next.js + TypeScript Example">
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        {state === 0 && <LoginBox logIn={logIn} />}
+        {state === 0 && <LoginBox logIn={logIn} createAccount={createAccount} message={message}/>}
 
         {state !== 0 && (
           <div style={{
