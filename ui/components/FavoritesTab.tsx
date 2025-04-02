@@ -1,7 +1,8 @@
 import List from "./List";
+import { Movie } from "../interfaces";
 
 export const FavoritesTab = (props: {
-    items: ({ id: number; title: string; rating: string; release_date: string })[],
+    items: Movie[],
     src: string
 }) => {
 

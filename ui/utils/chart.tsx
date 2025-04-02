@@ -1,6 +1,7 @@
 import QuickChart from 'quickchart-js';
+import { Movie } from '../interfaces';
 
-export default function createChartUrl(movies: { title: string; rating: string }[]) {
+export default function createChartUrl(movies: Movie[]) {
   const chart = new QuickChart();
   chart.setWidth(200);
   chart.setHeight(150);
@@ -12,7 +13,7 @@ export default function createChartUrl(movies: { title: string; rating: string }
       datasets: [
         {
           label: 'Movie Ratings',
-          data: movies.map(m => parseFloat(m.rating)),
+          data: movies.map(m => parseFloat(m.vote_average)),
         },
       ],
     },

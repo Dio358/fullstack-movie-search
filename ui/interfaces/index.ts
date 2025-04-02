@@ -13,6 +13,6 @@ export type User = {
 export type Movie = {
   id: number;
   title: string;
-  rating: string;
+  vote_average: string;
   release_date: string;
 };

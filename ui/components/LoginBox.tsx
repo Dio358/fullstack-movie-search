@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 const LoginBox = ({logIn, createAccount, message}) => {
-    const [userName, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [userName, setUsername] = React.useState<string>("")
+    const [password, setPassword] = React.useState<string>("")
 
     return <div style={{ 
         padding: "20px", 

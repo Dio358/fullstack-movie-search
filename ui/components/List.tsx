@@ -33,7 +33,7 @@ const List: React.FC<Props> = ({ items, onClick, onHover = null, action }) => {
             <span style={{ padding: "5% 0", fontSize: "16px" }}>Release Date</span>
             <span style={{ padding: "5% 0", fontSize: "16px" }}>Rating</span>
           </div>
-          {items.map((item, index) => (
+          {items && items.map((item, index) => (
               <li
                   key={item.id}
                   style={{
@@ -59,7 +59,7 @@ const List: React.FC<Props> = ({ items, onClick, onHover = null, action }) => {
                 {item.release_date}
               </span>
                   <span style={{ paddingLeft: "15%", fontSize: "16px" }}>
-                {item.rating}
+                {item.vote_average}
               </span>
                 </div>
               </li>

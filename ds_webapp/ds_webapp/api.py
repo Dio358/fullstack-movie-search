@@ -491,7 +491,7 @@ class Login(Resource):
                         "username": "JohnDoe123",
                     }
                 )
-                return {"message": f"login successful! Access token: {token}"}, 200
+                return {"message": "login successful!", "token": f"{token}"}, 200
 
             return {"error": "Unathorized"}, 401
         except Exception as e:
@@ -655,9 +655,7 @@ def add_endpoints(api: Api) -> None:
     """
     api.add_resource(Welcome, "/")
     api.add_resource(Movies, "/movies")
-    api.add_resource(
-        MostPopular, "/movies/most_popular", "/movies/most_popular/<int:n>"
-    )
+    api.add_resource(MostPopular, "/most_popular", "/most_popular/<int:n>")
     api.add_resource(MoviesWithSameGenres, "/movies/same_genres/<string:movie>")
     api.add_resource(MoviesWithSimilarRuntime, "/movies/similar_runtime/<string:movie>")
     api.add_resource(CreateUser, "/createUser")

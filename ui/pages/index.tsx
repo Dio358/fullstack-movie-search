@@ -5,43 +5,20 @@ import createChartUrl from "../utils/chart";
 import {SideBar} from "../components/sideBar";
 import {DiscoverTab} from "../components/DiscoverTab";
 import {FavoritesTab} from "../components/FavoritesTab";
+import { Movie } from "../interfaces";
 
 const IndexPage = () => {
   const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [state, setState] = useState(0);
-  const [token, setToken] = useState("")
+  const [token, setToken] = useState("");
 
-  const movies = [
-    { id: 0, title: "Harry Potter", rating: "8.0", release_date: "2023" },
-    { id: 1, title: "Harry Potter 2", rating: "7.0", release_date: "2024" }
+  const movies : Movie[]= [
+    { id: 0, title: "Harry Potter", vote_average: "8.0", release_date: "2023" },
+    { id: 1, title: "Harry Potter 2", vote_average: "7.0", release_date: "2024" }
   ];
 
   const [chart, setChart] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/backend-proxy/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({}), 
-        });
-  
-        const data = await res.json();
-        console.log("Data from backend:", data);
-        setMessage(data.message || JSON.stringify(data));
-        setState(1);
-      } catch (err) {
-        console.error("Failed to fetch from backend:", err);
-        setMessage("Failed to connect to backend.");
-      }
-    };
-  
-    fetchData();
-  }, []); 
   
 
   const logIn = async (userName: string, password: string) => {
@@ -60,6 +37,7 @@ const IndexPage = () => {
       if (res.ok){
         setState(1)
         setMessage("")
+        setToken(data.token)
       } else {
         setMessage("Login failed")
         console.log("Response:", data, res.status);
@@ -128,7 +106,7 @@ const IndexPage = () => {
                      onClick1={() => state !== 2 ? setState(2) : undefined} onClick2={() => setState(0)}/>
 
             {state === 1 && (
-                <DiscoverTab items={movies}/>
+                <DiscoverTab token={token}/>
             )}
 
             {state === 2 && (

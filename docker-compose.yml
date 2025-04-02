@@ -29,7 +29,7 @@ services:
     command: ["poetry", "run", "app"]
     networks:
       - app-network
-
+  
   frontend:
     build:
       context: ./ui
@@ -42,6 +42,12 @@ services:
       - app-network
     environment:
       - BACKEND_URL=http://app:5000
+    develop:
+      watch:
+      - path: .
+        target: /frontend
+        action: sync
+
 
 networks:
   app-network:
