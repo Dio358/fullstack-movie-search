@@ -15,7 +15,7 @@ export const DiscoverTab = ({
 
     const getMovies = async () => {
         try {
-          const res = await fetch("/api/backend-proxy/most_popular/20", {
+          const res = await fetch("/api/backend-proxy/movies/most_popular/20", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",

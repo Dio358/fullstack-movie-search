@@ -6,6 +6,7 @@ import {SideBar} from "../components/sideBar";
 import {DiscoverTab} from "../components/DiscoverTab";
 import {FavoritesTab} from "../components/FavoritesTab";
 import { Movie } from "../interfaces";
+import { SearchTab } from "../components/SearchTab";
 
 const IndexPage = () => {
   const [message, setMessage] = useState("");
@@ -102,8 +103,11 @@ const IndexPage = () => {
             flexDirection: "row",
             alignItems: "center"
           }}>
-            <SideBar onClick={() => state !== 1 ? setState(1) : undefined} state={state}
-                     onClick1={() => state !== 2 ? setState(2) : undefined} onClick2={() => setState(0)}/>
+            <SideBar onClick={() => state !== 1 ? setState(1) : undefined}
+                     onClick1={() => state !== 2 ? setState(2) : undefined} 
+                     onClick2={() => state !== 3 ? setState(3) : undefined}
+                     onClick3={() => setState(0)}
+                     state={state}/>
 
             {state === 1 && (
                 <DiscoverTab token={token}/>
@@ -111,6 +115,10 @@ const IndexPage = () => {
 
             {state === 2 && (
                 <FavoritesTab items={movies} src={chart}/>
+            )}
+
+            {state === 3 && (
+                <SearchTab token={token} />
             )}
           </div>
         )}

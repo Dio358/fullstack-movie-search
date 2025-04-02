@@ -714,8 +714,10 @@ def add_endpoints(api: Api) -> None:
     :param api: Flask-RESTful API object.
     """
     api.add_resource(Welcome, "/")
-    api.add_resource(Movies, "/movies")
-    api.add_resource(MostPopular, "/most_popular", "/most_popular/<int:n>")
+    api.add_resource(SearchMovie, "/movies/<string:title>")
+    api.add_resource(
+        MostPopular, "/movies/most_popular", "/movies/most_popular/<int:n>"
+    )
     api.add_resource(MoviesWithSameGenres, "/movies/same_genres/<string:movie>")
     api.add_resource(MoviesWithSimilarRuntime, "/movies/similar_runtime/<string:movie>")
     api.add_resource(CreateUser, "/createUser")
@@ -723,7 +725,6 @@ def add_endpoints(api: Api) -> None:
     api.add_resource(FavoriteMovies, "/movies/favorite")
     api.add_resource(AddFavorite, "/movies/favorite/<int:movie_id>")
     api.add_resource(RemoveFavorite, "/movies/favorite/<int:movie_id>")
-    api.add_resource(SearchMovie, "/movies/search_movie/<string:title>")
 
 
 if __name__ == "__main__":
