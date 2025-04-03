@@ -1,31 +1,23 @@
-import {useState} from "react";
+import { useState } from "react";
 import List from "./List";
 import * as React from "react";
 import { Movie } from "../interfaces";
+import AsyncSelect from "react-select/async";
+import { Title } from "./Title";
 
-export const SearchTab = ({
-    token,
-  }: {
-    token: string;
-  }) => {
-    const [selectedLength, setSelectedLength] = useState(1);
-    const [selectedMovie, setSelectedMovie] = useState(-1);
-    const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-    const [title, setTitle] = React.useState<string>("");
-    const [searchResult, setSearchResult] = React.useState<Movie[]>([]);
-    
-    const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
-    };
+export const SearchTab = ({ token }: { token: string }) => {
+    const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
+    const [searchResult, setSearchResult] = useState<Movie[]>([]);
+    const [sameGenreMovies, setSameGenreMovies] = useState<Movie[]>([])
+    const [similarRuntimeMovies, setSimilarRuntimeMovies] = useState<Movie[]>([])
 
-    const searchMovie = async () => {
-        if (!title.trim()) {
-            setSearchResult([]);
-            return;
+    const loadOptions = async (inputValue: string): Promise<{ value: number; label: string }[]> => {
+        if (!inputValue.trim()) {
+            return [];
         }
-        
+    
         try {
-            const res = await fetch("/api/backend-proxy/movies/" + encodeURIComponent(title), {
+            const res = await fetch("/api/backend-proxy/movies/" + encodeURIComponent(inputValue), {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -34,22 +26,95 @@ export const SearchTab = ({
             });
     
             const data = await res.json();
-            console.log("Data from backend:", data.results);
-            console.log("res.ok:", res.ok);
-          
+    
             if (res.ok) {
-                setSearchResult(Array.isArray(data?.results) ? data.results : []);
-            } 
+                const results = Array.isArray(data?.results) ? data.results : [];
+    
+                setSearchResult(results);
+    
+                return results.map((movie: Movie) => ({
+                    value: movie.id,
+                    label: movie.title,
+                }));
+            } else {
+                return [];
+            }
         } catch (err) {
             console.error("Failed to fetch from backend:", err);
-            setSearchResult([]);
+            return [];
         }
     };
-
+    const getSameGenreMovies = async (title: string): Promise<Movie[]> => {
+        try {
+            const res = await fetch("/api/backend-proxy/movies/same_genres/" + encodeURIComponent(title), {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token,
+                },
+            });
+    
+            const data = await res.json();
+            return res.ok && Array.isArray(data) ? data : [];
+        } catch (err) {
+            console.error("Failed to fetch same genre movies:", err);
+            return [];
+        }
+    };
+    
+    const getSimilarRuntimeMovies = async (title: string): Promise<Movie[]> => {
+        try {
+            const res = await fetch("/api/backend-proxy/movies/similar_runtime/" + encodeURIComponent(title), {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token,
+                },
+            });
+    
+            const data = await res.json();
+            console.log("data: ", data)
+            return res.ok && Array.isArray(data) ? data : [];
+        } catch (err) {
+            console.error("Failed to fetch similar runtime movies:", err);
+            return [];
+        }
+    };
+    
+    
     React.useEffect(() => {
-        searchMovie();
-    }, [title]);
+        const fetchRelatedMovies = async () => {
+            if (!selectedMovie) {
+                setSameGenreMovies([]);
+                setSimilarRuntimeMovies([]);
+                return;
+            }
+    
+            try {
+                const [sameGenre, similarRuntime] = await Promise.all([
+                    getSameGenreMovies(selectedMovie),
+                    getSimilarRuntimeMovies(selectedMovie)
+                ]);
+    
+                setSameGenreMovies(sameGenre);
+                setSimilarRuntimeMovies(similarRuntime);
+            } catch (err) {
+                console.error("Failed to fetch related movies:", err);
+                setSameGenreMovies([]);
+                setSimilarRuntimeMovies([]);
+            }
+        };
+    
+        fetchRelatedMovies();
+    }, [selectedMovie]);
+    
+    
+    
 
+    const handleSelect = (option: any) => {
+        setSelectedMovie(option?.label ?? null);
+    };
+    
     return (
         <div style={{
             display: "flex",
@@ -58,33 +123,27 @@ export const SearchTab = ({
             marginLeft: "20px",
             paddingLeft: "10%"
         }}>
-            <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "10px"}}>
-                <h1 style={{fontFamily: "Arial", textAlign: "center", marginBottom: "20px"}}>Search Movie</h1>
-                <input
-                    type="text"
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px", minWidth: "400px" }}>
+                <AsyncSelect
+                    cacheOptions
+                    loadOptions={loadOptions}
+                    onChange={handleSelect}
                     placeholder="Search for a movie..."
-                    value={title}
-                    onChange={handleInput}
-                    style={{
-                        padding: "8px",
-                        fontSize: "16px",
-                        borderRadius: "4px",
-                        border: "1px solid #ccc"
+                    defaultOptions
+                    styles={{
+                        container: (base) => ({
+                            ...base,
+                            flex: 1,
+                        }),
                     }}
-                />        
+                />
             </div>
-            
-            {searchResult.length > 0 ? (
-                <List items={searchResult} action="add to"/>
-            ) : (
-                <p>{title.trim() ? "No results found" : "Type to search for movies"}</p>
-            )}
-            
-            <h1 style={{fontFamily: "Arial", textAlign: "center", marginBottom: "20px"}}>Movies in the Same Genres</h1>
-            {/* <List items={movies} action="remove from"/> */}
 
-            <h1 style={{fontFamily: "Arial", textAlign: "center", marginBottom: "20px"}}>Movies with Similar Runtimes</h1>
-            {/* <List items={movies} action="remove from"/> */}
+            <Title>Movies in the Same Genres</Title>
+            <List items={sameGenreMovies} onClick={(item) => console.log(item)} maxHeight="200px" action="remove from" />
+
+            <Title>Movies with Similar Runtimes</Title>
+            <List items={similarRuntimeMovies} maxHeight="200px" action="remove from" />
         </div>
     );
-}
+};

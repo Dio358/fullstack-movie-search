@@ -1,7 +1,6 @@
 import Layout from "../components/Layout";
 import {useEffect, useState} from "react";
 import LoginBox from "../components/LoginBox";
-import createChartUrl from "../utils/chart";
 import {SideBar} from "../components/sideBar";
 import {DiscoverTab} from "../components/DiscoverTab";
 import {FavoritesTab} from "../components/FavoritesTab";
@@ -18,8 +17,6 @@ const IndexPage = () => {
     { id: 0, title: "Harry Potter", vote_average: "8.0", release_date: "2023" },
     { id: 1, title: "Harry Potter 2", vote_average: "7.0", release_date: "2024" }
   ];
-
-  const [chart, setChart] = useState("");
   
 
   const logIn = async (userName: string, password: string) => {
@@ -83,10 +80,6 @@ const IndexPage = () => {
     setLoggedIn(false);
   };
 
-  useEffect(() => {
-    setChart(createChartUrl(movies));
-  }, []);
-
   return (
     <Layout title="Home | Next.js + TypeScript Example">
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -97,7 +90,7 @@ const IndexPage = () => {
             padding: "20px",
             width: "90vh",
             height: "80vh",
-            background: "rgba(255, 255, 255, 0.26)",
+            background: "rgb(18,18,18)",
             borderRadius: "5px",
             display: "flex",
             flexDirection: "row",
@@ -114,7 +107,7 @@ const IndexPage = () => {
             )}
 
             {state === 2 && (
-                <FavoritesTab items={movies} src={chart}/>
+                <FavoritesTab token={token}/>
             )}
 
             {state === 3 && (

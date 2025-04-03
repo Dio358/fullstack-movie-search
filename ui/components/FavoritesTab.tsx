@@ -1,12 +1,45 @@
+import * as React from "react"
 import List from "./List";
 import { Movie } from "../interfaces";
+import { Title } from "./Title";
+import createChartUrl from "../utils/chart";
 
-export const FavoritesTab = (props: {
-    items: Movie[],
-    src: string
+
+
+export const FavoritesTab = ({token} : {
+    token: string
 }) => {
+    const [movies, setMovies] = React.useState([])
+    const [chartUrl, setChartUrl] = React.useState("")
 
+    React.useEffect(() => {
+        setChartUrl(createChartUrl(movies));
+      }, [movies]);
+
+    React.useEffect(() => {
+
+        const getFavorites = async () => {
+            try {
+              const res = await fetch("/api/backend-proxy/movies/favorite/", {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + token,
+                },
+              });
+        
+              const data = await res.json();
     
+              if (res.ok) setMovies(data)
+    
+            } catch (err) {
+              console.error("Failed to fetch from backend:", err);
+            }
+          };
+        
+        getFavorites()
+
+    }, []);    
 
     return <div style={{
         display: "flex",
@@ -15,10 +48,10 @@ export const FavoritesTab = (props: {
         marginLeft: "20px",
         paddingLeft: "13%"
     }}>
-        <h1 style={{fontFamily: "Arial", textAlign: "center", marginBottom: "20px"}}>Favorites</h1>
-        <List items={props.items} action="remove from"/>
+        <Title>Favorites</Title>
+        <List items={movies} action="remove from"/>
 
-        <h1 style={{fontFamily: "Arial", textAlign: "center", marginBottom: "20px"}}>Average Score</h1>
-        <img src={props.src} alt="Chart of average scores"/>
+        <Title>Average Score</Title>
+        {chartUrl && <img src={chartUrl} alt="Chart of average scores"/>}
     </div>;
 }

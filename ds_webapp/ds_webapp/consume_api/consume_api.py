@@ -179,3 +179,4 @@ if __name__ == "__main__":
 
     result = search_movies_with_duration(90, 100)
     print(result)
+

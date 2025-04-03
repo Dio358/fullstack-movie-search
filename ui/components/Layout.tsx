@@ -10,7 +10,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
   <div
     style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg,rgba(75, 177, 68, 0.42),rgba(61, 125, 234, 0.36))",
+      background: "linear-gradient(135deg,rgb(0, 0, 0),rgb(42,42,42))",
     }}
   >
     <div

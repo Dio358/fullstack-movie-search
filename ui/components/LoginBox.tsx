@@ -8,13 +8,13 @@ const LoginBox = ({logIn, createAccount, message}) => {
         padding: "20px", 
         width: "30vh", 
         height: "25vh",
-        background: "rgba(255, 255, 255, 0.9)", 
+        background: "rgb(18,18,18)", 
         borderRadius: "5px", 
         display: "flex", 
         flexDirection: "column", 
         alignItems: "center" 
       }}>
-        <h1 style={{ fontFamily: "Arial", textAlign: "center", marginBottom: "20px" }}>Log in</h1>
+        <h1 style={{ fontFamily: "Arial", textAlign: "center", marginBottom: "20px", color: "white" }}>Log in</h1>
         <input 
           type="text" 
           value={userName}

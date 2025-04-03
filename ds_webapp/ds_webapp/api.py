@@ -548,9 +548,16 @@ class FavoriteMovies(Resource):
             return await favorites_table.get_favorites(user_id=user_id)
 
         try:
-            return async_request(get_favorites), 200
-        except Exception:
-            return {"message": "Internal server error"}, 500
+            result = async_request(get_favorites)
+
+            if result:
+                return {
+                    "result": [
+                        get_movie_details(dict(row).get("movie_id")) for row in result
+                    ]
+                }, 200
+        except Exception as e:
+            return {"message": f"Internal server error {e}"}, 500
 
 
 class AddFavorite(Resource):
@@ -580,6 +587,7 @@ class AddFavorite(Resource):
     @jwt_required
     def post(self, movie_id):
         user_id = request.user["user_id"]
+
         favorites_table = Favorites(db=db)
 
         async def like_movie():
@@ -588,8 +596,8 @@ class AddFavorite(Resource):
         try:
             async_request(like_movie)
             return {"message": "OK"}, 201
-        except Exception:
-            return {"message": "Internal server error"}, 500
+        except Exception as e:
+            return {"message": f"Internal server error: {e}"}, 500
 
 
 class RemoveFavorite(Resource):

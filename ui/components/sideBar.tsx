@@ -40,7 +40,7 @@ export const SideBar = (props: { onClick: () => void, state: number, onClick1: (
             style={{
                 marginTop: "15px",
                 padding: "10px 20px",
-                backgroundColor: props.state !== 2 ? "rgba(17, 124, 231, 0.35)" : "rgba(17, 124, 231, 0.63)",
+                backgroundColor: props.state !== 3 ? "rgba(17, 124, 231, 0.35)" : "rgba(17, 124, 231, 0.63)",
                 color: "white",
                 border: "solid",
                 borderRadius: "5px",
@@ -48,7 +48,7 @@ export const SideBar = (props: { onClick: () => void, state: number, onClick1: (
                 cursor: "pointer"
             }}
         >
-            Search Movie
+            Search
         </button>
         <button
             onClick={props.onClick3}

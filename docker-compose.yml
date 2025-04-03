@@ -42,11 +42,6 @@ services:
       - app-network
     environment:
       - BACKEND_URL=http://app:5000
-    develop:
-      watch:
-      - path: .
-        target: /frontend
-        action: sync
 
 
 networks:
