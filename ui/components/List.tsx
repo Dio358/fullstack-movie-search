@@ -41,7 +41,6 @@ const List: React.FC<Props> = ({ items, maxHeight = "300px", length = Number.POS
 
   return (
     <>
-      <span>Click row to {action} favorites</span>
       <div style={{
         width: "95%",
         borderRadius: "5px",

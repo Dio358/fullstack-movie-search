@@ -1,19 +1,16 @@
-import {useState} from "react";
+import { useState, useEffect, useContext } from "react";
 import List from "./List";
-import * as React from "react";
 import { Movie } from "../interfaces";
 import { Title } from "./Title";
+import { Token } from "./Token";
 
-export const DiscoverTab = ({
-    token,
-  }: {
-    token: string;
-  }) => {
+export const DiscoverTab = () => {
     const [selectedLength, setSelectedLength] = useState(1);
     const [selectedMovie, setSelectedMovie] = useState(-1);
-    const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-    const [movies, setMovies] = React.useState< Movie[] | null>(null);
-
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [movies, setMovies] = useState< Movie[] | null>(null);
+    const token = useContext(Token)
+    
     const getMovies = async () => {
         try {
           const res = await fetch("/api/backend-proxy/movies/most_popular/20", {
@@ -34,7 +31,7 @@ export const DiscoverTab = ({
         }
       };
 
-      React.useEffect(() => {
+      useEffect(() => {
         getMovies()
       }, [token])
 
@@ -50,7 +47,6 @@ export const DiscoverTab = ({
           });
     
           const data = await res.json();
-          console.log("response: ",res)
         } catch (err) {
           console.error("Failed to fetch from backend:", err);
         }
@@ -64,13 +60,13 @@ export const DiscoverTab = ({
         paddingLeft: "10%"
     }}>
         <Title>Popular Movies</Title>
-        <select value={selectedLength} onChange={(e) => setSelectedLength(Number(e.target.value))}>
+        <select style={{marginBottom: "15px"}} value={selectedLength} onChange={(e) => setSelectedLength(Number(e.target.value))}>
             {Array.from({length: 20}, (_, i) => (
                 <option key={i + 1} value={i + 1}>
                     {i + 1}
                 </option>
             ))}
         </select>
-        <List items={movies} length={selectedLength} onClick={(movie: Movie) => addTofavorites({ movie_id: movie.id })} action="add to"/>
+        <List items={movies} onClick={(movie: Movie) => addTofavorites({ movie_id: movie.id })} action="add to"/>
     </div>;
 }

@@ -7,14 +7,14 @@ const LoginBox = ({logIn, createAccount, message}) => {
     return <div style={{ 
         padding: "20px", 
         width: "30vh", 
-        height: "25vh",
+        height: "30vh",
         background: "rgb(18,18,18)", 
         borderRadius: "5px", 
         display: "flex", 
         flexDirection: "column", 
         alignItems: "center" 
       }}>
-        <h1 style={{ fontFamily: "Arial", textAlign: "center", marginBottom: "20px", color: "white" }}>Log in</h1>
+        <h1 style={{ fontFamily: "Arial", textAlign: "center", paddingBottom: "5px", color: "white" }}>Log in</h1>
         <input 
           type="text" 
           value={userName}
@@ -32,7 +32,7 @@ const LoginBox = ({logIn, createAccount, message}) => {
         {message != "" && <span>{message}</span>}
         <button onClick={() => logIn(userName, password)}
             style={{
-              marginTop: "15px",
+              marginTop: "20px",
               padding: "10px 20px",
               backgroundColor: "rgba(17, 124, 231, 0.9)",
               color: "white",

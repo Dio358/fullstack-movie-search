@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import List from "./List";
-import * as React from "react";
 import { Movie } from "../interfaces";
 import AsyncSelect from "react-select/async";
 import { Title } from "./Title";
+import { Token } from "./Token";
 
-export const SearchTab = ({ token }: { token: string }) => {
+export const SearchTab = () => {
     const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
     const [searchResult, setSearchResult] = useState<Movie[]>([]);
     const [sameGenreMovies, setSameGenreMovies] = useState<Movie[]>([])
     const [similarRuntimeMovies, setSimilarRuntimeMovies] = useState<Movie[]>([])
+    const token = useContext(Token)
+    
 
     const loadOptions = async (inputValue: string): Promise<{ value: number; label: string }[]> => {
         if (!inputValue.trim()) {
@@ -82,7 +84,7 @@ export const SearchTab = ({ token }: { token: string }) => {
     };
     
     
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchRelatedMovies = async () => {
             if (!selectedMovie) {
                 setSameGenreMovies([]);

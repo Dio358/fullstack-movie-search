@@ -1,22 +1,23 @@
-import * as React from "react"
+import { useEffect, useContext, useState } from "react"
 import List from "./List";
 import { Movie } from "../interfaces";
 import { Title } from "./Title";
 import createChartUrl from "../utils/chart";
+import { Token } from "./Token";
 
 
 
-export const FavoritesTab = ({token} : {
-    token: string
-}) => {
-    const [movies, setMovies] = React.useState([])
-    const [chartUrl, setChartUrl] = React.useState("")
+export const FavoritesTab = () => {
+    const [movies, setMovies] = useState([])
+    const [chartUrl, setChartUrl] = useState("")
+    const token = useContext(Token)
+  
 
-    React.useEffect(() => {
+    useEffect(() => {
         setChartUrl(createChartUrl(movies));
       }, [movies]);
 
-    React.useEffect(() => {
+    useEffect(() => {
 
         const getFavorites = async () => {
             try {
@@ -30,7 +31,7 @@ export const FavoritesTab = ({token} : {
         
               const data = await res.json();
     
-              if (res.ok) setMovies(data)
+              if (res.ok) setMovies(data.results)
     
             } catch (err) {
               console.error("Failed to fetch from backend:", err);

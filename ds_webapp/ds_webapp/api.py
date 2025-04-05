@@ -549,15 +549,16 @@ class FavoriteMovies(Resource):
 
         try:
             result = async_request(get_favorites)
+            return {
+                "results": (
+                    [get_movie_details(dict(row).get("movie_id")) for row in result]
+                    if result
+                    else []
+                )
+            }, 200
 
-            if result:
-                return {
-                    "result": [
-                        get_movie_details(dict(row).get("movie_id")) for row in result
-                    ]
-                }, 200
-        except Exception as e:
-            return {"message": f"Internal server error {e}"}, 500
+        except Exception:
+            return {"message": "Internal server error"}, 500
 
 
 class AddFavorite(Resource):

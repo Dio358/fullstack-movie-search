@@ -31,7 +31,6 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
 
-    {/* content goes above the overlay */}
     <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
   </div>
 );

@@ -1,23 +1,18 @@
 import Layout from "../components/Layout";
-import {useEffect, useState} from "react";
+import {useEffect, useState, createContext} from "react";
 import LoginBox from "../components/LoginBox";
 import {SideBar} from "../components/sideBar";
 import {DiscoverTab} from "../components/DiscoverTab";
 import {FavoritesTab} from "../components/FavoritesTab";
 import { Movie } from "../interfaces";
 import { SearchTab } from "../components/SearchTab";
+import { Token } from "../components/Token";
 
 const IndexPage = () => {
   const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [state, setState] = useState(0);
   const [token, setToken] = useState("");
-
-  const movies : Movie[]= [
-    { id: 0, title: "Harry Potter", vote_average: "8.0", release_date: "2023" },
-    { id: 1, title: "Harry Potter 2", vote_average: "7.0", release_date: "2024" }
-  ];
-  
 
   const logIn = async (userName: string, password: string) => {
     try {
@@ -81,14 +76,14 @@ const IndexPage = () => {
   };
 
   return (
-    <Layout title="Home | Next.js + TypeScript Example">
+    <Layout title="The Movie App">
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         {state === 0 && <LoginBox logIn={logIn} createAccount={createAccount} message={message}/>}
 
         {state !== 0 && (
           <div style={{
-            padding: "20px",
-            width: "90vh",
+            padding: "50px",
+            width: "100vh",
             height: "80vh",
             background: "rgb(18,18,18)",
             borderRadius: "5px",
@@ -102,17 +97,19 @@ const IndexPage = () => {
                      onClick3={() => setState(0)}
                      state={state}/>
 
-            {state === 1 && (
-                <DiscoverTab token={token}/>
-            )}
+            <Token.Provider value={token}>
+              {state === 1 && (
+                  <DiscoverTab/>
+              )}
 
-            {state === 2 && (
-                <FavoritesTab token={token}/>
-            )}
+              {state === 2 && (
+                  <FavoritesTab/>
+              )}
 
-            {state === 3 && (
-                <SearchTab token={token} />
-            )}
+              {state === 3 && (
+                  <SearchTab />
+              )}
+            </Token.Provider>
           </div>
         )}
         
