@@ -7,6 +7,8 @@ import {FavoritesTab} from "../components/FavoritesTab";
 import { Movie } from "../interfaces";
 import { SearchTab } from "../components/SearchTab";
 import { Token } from "../components/Token";
+import { Provider } from "react-redux"
+import { store } from "../redux/store"
 
 const IndexPage = () => {
   const [message, setMessage] = useState("");
@@ -77,43 +79,45 @@ const IndexPage = () => {
 
   return (
     <Layout title="The Movie App">
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        {state === 0 && <LoginBox logIn={logIn} createAccount={createAccount} message={message}/>}
+      <Provider store={store}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+          {state === 0 && <LoginBox logIn={logIn} createAccount={createAccount} message={message}/>}
 
-        {state !== 0 && (
-          <div style={{
-            padding: "50px",
-            width: "100vh",
-            height: "80vh",
-            background: "rgb(18,18,18)",
-            borderRadius: "5px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center"
-          }}>
-            <SideBar onClick={() => state !== 1 ? setState(1) : undefined}
-                     onClick1={() => state !== 2 ? setState(2) : undefined} 
-                     onClick2={() => state !== 3 ? setState(3) : undefined}
-                     onClick3={() => setState(0)}
-                     state={state}/>
+          {state !== 0 && (
+            <div style={{
+              padding: "50px",
+              width: "100vh",
+              height: "80vh",
+              background: "rgb(18,18,18)",
+              borderRadius: "5px",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center"
+            }}>
+              <SideBar onClick={() => state !== 1 ? setState(1) : undefined}
+                      onClick1={() => state !== 2 ? setState(2) : undefined} 
+                      onClick2={() => state !== 3 ? setState(3) : undefined}
+                      onClick3={() => setState(0)}
+                      state={state}/>
 
-            <Token.Provider value={token}>
-              {state === 1 && (
-                  <DiscoverTab/>
-              )}
+              <Token.Provider value={token}>
+                {state === 1 && (
+                    <DiscoverTab/>
+                )}
 
-              {state === 2 && (
-                  <FavoritesTab/>
-              )}
+                {state === 2 && (
+                    <FavoritesTab/>
+                )}
 
-              {state === 3 && (
-                  <SearchTab />
-              )}
-            </Token.Provider>
-          </div>
-        )}
-        
-      </div>
+                {state === 3 && (
+                    <SearchTab />
+                )}
+              </Token.Provider>
+            </div>
+          )}
+          
+        </div>
+      </Provider>
     </Layout>
   );
 };

@@ -1,6 +1,5 @@
-import * as React from "react";
 import { Movie } from "../interfaces";
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import styles from './scrollableList.module.css';
 import {ListItem} from './ListItem'
 
@@ -15,8 +14,8 @@ type Props = {
 
 
 const List: React.FC<Props> = ({ items, maxHeight = "300px", length = Number.POSITIVE_INFINITY, onClick, onHover = null, action }) => {
-  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-  const [highlightPlus, setHighlightPlus] = React.useState<boolean>(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [highlightPlus, setHighlightPlus] = useState<boolean>(false);
   
   useEffect(() => {
     if (onHover) {
@@ -25,7 +24,7 @@ const List: React.FC<Props> = ({ items, maxHeight = "300px", length = Number.POS
   }, [hoveredIndex, onHover, items]);
 
   // Memoize the list items to prevent re-rendering when hoveredIndex changes
-  const memoizedListItems = React.useMemo(() => {
+  const memoizedListItems = useMemo(() => {
     if (!Array.isArray(items)) return null;
     return items && items.slice(0, length).map((item, index) => (
       <ListItem
