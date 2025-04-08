@@ -57,6 +57,7 @@ const List: React.FC<Props> = ({
           width: "95%",
           borderRadius: "5px",
           overflow: "hidden",
+          minWidth: "645px",
         }}
       >
         {/* Header */}

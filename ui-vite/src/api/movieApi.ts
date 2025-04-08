@@ -24,7 +24,7 @@ export const fetchMostPopularMovies = async (token: string, count: number = 20) 
     }
   };
   
-  export const addMovieToFavorites = async (token: string, movie_id: number) => {
+export const addMovieToFavorites = async (token: string, movie_id: number) => {
     console.log("Adding movie to favorites:", movie_id);
     console.log("Token:", token);
     try {
@@ -44,9 +44,28 @@ export const fetchMostPopularMovies = async (token: string, count: number = 20) 
     }
   };
 
+  
+export const deleteMovieFromFavorites = async (token: string, movie_id: number) => {
+    console.log("removing movie from favorites:", movie_id);
+    console.log("Token:", token);
+    try {
+      await fetch(
+        `${BASE_URL}/movies/favorite/` + encodeURIComponent(movie_id),
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      console.log("Movie removed from favorites successfully");
+    } catch (err) {
+      console.error("Failed to add movie to favorites:", err);
+    }
+  };
+
 export const fetchFavoriteMovies = async (token: string) => {
-  console.log("Fetching favorite movies");
-  console.log("Token:", token);
   try {
     const res = await fetch(`${BASE_URL}/movies/favorite`, {
       method: "GET",
@@ -57,9 +76,6 @@ export const fetchFavoriteMovies = async (token: string) => {
     });
 
     const data = await res.json();
-    console.log("Response:", data);
-    console.log("Response status:", res.status);
-    console.log("Response ok:", res.ok);
 
     if (res.ok) {
       return data.results;
@@ -71,7 +87,6 @@ export const fetchFavoriteMovies = async (token: string) => {
     return null;
   }
 };
-
 
 
 export const searchMovies = async (token: string, query: string): Promise<{ value: number; label: string }[]> => {

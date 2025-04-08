@@ -1,5 +1,9 @@
 import React from "react";
 import { createAccount, logIn } from "../api/authApi";
+import { useAppDispatch } from "../redux/hooks";
+import {} from "../redux/favorites-slice";
+import { AppDispatch } from "../redux/store";
+import { fetchFavorites } from "../redux/favorites-thunks";
 
 const LoginBox = ({
   setToken,
@@ -11,11 +15,17 @@ const LoginBox = ({
   const [userName, setUsername] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [message, setMessage] = React.useState<string>("");
+  const dispatch: AppDispatch = useAppDispatch();
+
+  const loadFavorites = (token: string) => async () => {
+    dispatch(fetchFavorites(token));
+  };
 
   const handleLogIn = async (userName: string, password: string) => {
     try {
       const result = await logIn(userName, password);
       if (result) {
+        await loadFavorites(result.token)();
         setToken(result.token);
         setState(1);
         setMessage("");
@@ -42,6 +52,7 @@ const LoginBox = ({
     <div
       style={{
         padding: "20px",
+        paddingBottom: "60px",
         width: "30vh",
         height: "30vh",
         background: "rgb(18,18,18)",

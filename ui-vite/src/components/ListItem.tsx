@@ -42,7 +42,7 @@ export const ListItem = memo(
           <AddToFavoritesButton
             index={index}
             hoveredIndex={hoveredIndex}
-            movie_id={item.id}
+            movie={item}
           />
         </div>
       </li>

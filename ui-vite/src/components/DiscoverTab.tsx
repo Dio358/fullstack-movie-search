@@ -43,7 +43,7 @@ export const DiscoverTab = () => {
           </option>
         ))}
       </select>
-      <List items={movies} action="add to" />
+      <List items={movies} length={selectedLength} action="add to" />
     </div>
   );
 };

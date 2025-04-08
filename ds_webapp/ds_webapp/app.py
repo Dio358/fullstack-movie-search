@@ -19,7 +19,7 @@ CORS(
     app,
     resources={r"/*": {"origins": "*"}},
     supports_credentials=False,
-    methods=["GET", "POST", "OPTIONS"],
+    methods=["GET", "POST", "OPTIONS", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],
 )
 

@@ -1,30 +1,17 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import List from "./List";
 import { Title } from "./Title";
 import createChartUrl from "../utils/chart";
-import { Token } from "./Token";
-import { fetchFavoriteMovies } from "../api/movieApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 export const FavoritesTab = () => {
-  const [movies, setMovies] = useState([]);
   const [chartUrl, setChartUrl] = useState("");
-  const token = useContext(Token);
+  const favorites = useSelector((state: RootState) => state.favorites.movies);
 
   useEffect(() => {
-    setChartUrl(createChartUrl(movies));
-  }, [movies]);
-
-  useEffect(() => {
-    const getFavorites = async () => {
-      if (!token) return;
-      const favorites = await fetchFavoriteMovies(token);
-      if (favorites) {
-        setMovies(favorites);
-      }
-    };
-
-    getFavorites();
-  }, [token]);
+    setChartUrl(createChartUrl(favorites));
+  }, [favorites]);
 
   return (
     <div
@@ -37,7 +24,7 @@ export const FavoritesTab = () => {
       }}
     >
       <Title>Favorites</Title>
-      <List items={movies} action="remove from" />
+      <List items={favorites} action="remove from" />
 
       <Title>Average Score</Title>
       {chartUrl && <img src={chartUrl} alt="Chart of average scores" />}
