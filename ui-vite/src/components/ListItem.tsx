@@ -14,6 +14,7 @@ export const ListItem = memo(
     hoveredIndex: number | null;
     setHoveredIndex: (index: number | null) => void;
   }) => {
+    console.log("item: ", item);
     return (
       <li
         key={item.id}
@@ -38,7 +39,9 @@ export const ListItem = memo(
           <span style={{ fontSize: "16px" }}>{item.title}</span>
           <span style={{ fontSize: "16px" }}>{item.release_date}</span>
           <span style={{ fontSize: "16px" }}>{item.vote_average}</span>
-          <span style={{ fontSize: "16px" }}>{item.vote_average}</span>
+          <span style={{ fontSize: "16px" }}>
+            {item?.genres?.map((g) => g.name).join(", ") ?? item.vote_count}
+          </span>
           <AddToFavoritesButton
             index={index}
             hoveredIndex={hoveredIndex}

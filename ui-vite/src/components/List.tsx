@@ -9,6 +9,7 @@ type Props = {
   length?: number;
   onHover?: (index: Movie | null) => void | null;
   action: string;
+  showGenres?: boolean;
 };
 
 const List: React.FC<Props> = ({
@@ -16,6 +17,7 @@ const List: React.FC<Props> = ({
   maxHeight = "300px",
   length = Number.POSITIVE_INFINITY,
   onHover = null,
+  showGenres = false,
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -74,8 +76,12 @@ const List: React.FC<Props> = ({
           <span style={{ fontSize: "16px" }}>Title</span>
           <span style={{ fontSize: "16px" }}>Release Date</span>
           <span style={{ fontSize: "16px" }}>Rating</span>
-          <span style={{ fontSize: "16px" }}>Genres</span>
-          <span style={{ fontSize: "16px" }}>+</span>
+          {showGenres ? (
+            <span style={{ fontSize: "16px" }}>Genres</span>
+          ) : (
+            <span style={{ fontSize: "16px" }}>Vote Count</span>
+          )}
+          <span style={{ fontSize: "16px" }}></span>
         </div>
 
         {/* Content */}
