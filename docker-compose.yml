@@ -32,8 +32,8 @@ services:
   
   frontend:
     build:
-      context: ./ui
-      dockerfile: ./Dockerfile 
+      context: ./ui-vite
+      dockerfile: ./dockerfile 
     container_name: frontend
     restart: always
     ports:
@@ -41,7 +41,7 @@ services:
     networks:
       - app-network
     environment:
-      - BACKEND_URL=http://app:5000
+      - VITE_BASE_URL=http://localhost:5000
 
 
 networks:

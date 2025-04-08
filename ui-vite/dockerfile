@@ -1,0 +1,23 @@
+# Step 1: Install dependencies and build the frontend
+FROM node:18-alpine AS builder
+
+WORKDIR /frontend
+
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# Step 2: Run production server
+FROM node:18-alpine
+
+WORKDIR /frontend
+
+COPY --from=builder /frontend ./
+
+ENV NODE_ENV=production
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]

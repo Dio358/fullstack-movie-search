@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from flasgger import Swagger
 from flask import Flask, request
 from flask_restful import Api
+from flask_cors import CORS
 
 import ds_webapp.api
 
@@ -14,6 +15,14 @@ import ds_webapp.api
 load_dotenv()
 
 app = Flask(__name__)
+CORS(
+    app,
+    resources={r"/*": {"origins": "*"}},
+    supports_credentials=False,
+    methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+)
+
 api = Api(app)
 
 # Configuring Swagger
@@ -30,6 +39,12 @@ app.config["SWAGGER"] = {
     },
     "security": [{"BearerAuth": []}],
 }
+
+
+@app.before_request
+def log_request_info():
+    print(f"Method: {request.method}")
+    print(f"Headers: {dict(request.headers)}")
 
 
 swagger = Swagger(app)
