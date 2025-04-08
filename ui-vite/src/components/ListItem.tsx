@@ -1,47 +1,51 @@
-import * as React from "react";
+import { memo } from "react";
 import { Movie } from "../interfaces";
-import { PlusButton } from "./PlusButton";
+import { AddToFavoritesButton } from "./AddToFavoritesButton";
 
-
-
-
-export const ListItem = React.memo(({ 
-  item, 
-  index, 
-  hoveredIndex, 
-  setHoveredIndex, 
-  onClick 
-}: { 
-  item: Movie; 
-  index: number; 
-  hoveredIndex: number | null; 
-  setHoveredIndex: (index: number | null) => void; 
-  onClick?: () => void; 
-}) => {
-  return (
-    <li
-      key={item.id}
-      style={{
-        backgroundColor: hoveredIndex === index ? "rgba(109, 152, 199, 0.69)" : "transparent",
-        transition: "background-color 200ms ease",
-        cursor: "pointer",
-        padding: "10px 16px", 
-      }}
-      onMouseEnter={() => setHoveredIndex(index)}
-      onMouseLeave={() => setHoveredIndex(null)}
-    >
-      <div
+export const ListItem = memo(
+  ({
+    item,
+    index,
+    hoveredIndex,
+    setHoveredIndex,
+  }: {
+    item: Movie;
+    index: number;
+    hoveredIndex: number | null;
+    setHoveredIndex: (index: number | null) => void;
+  }) => {
+    return (
+      <li
+        key={item.id}
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
+          backgroundColor:
+            hoveredIndex === index
+              ? "rgba(109, 152, 199, 0.69)"
+              : "transparent",
+          transition: "background-color 200ms ease",
+          cursor: "pointer",
+          padding: "10px 16px",
         }}
+        onMouseEnter={() => setHoveredIndex(index)}
+        onMouseLeave={() => setHoveredIndex(null)}
       >
-        <span style={{ fontSize: "16px" }}>{item.title}</span>
-        <span style={{ fontSize: "16px" }}>{item.release_date}</span>
-        <span style={{ fontSize: "16px" }}>{item.vote_average}</span>
-        <span style={{ fontSize: "16px" }}>{item.vote_average}</span>
-        <PlusButton index={index} hoveredIndex={hoveredIndex} onClick={onClick}/>
-      </div>
-    </li>
-  );
-});
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(5, 1fr)",
+          }}
+        >
+          <span style={{ fontSize: "16px" }}>{item.title}</span>
+          <span style={{ fontSize: "16px" }}>{item.release_date}</span>
+          <span style={{ fontSize: "16px" }}>{item.vote_average}</span>
+          <span style={{ fontSize: "16px" }}>{item.vote_average}</span>
+          <AddToFavoritesButton
+            index={index}
+            hoveredIndex={hoveredIndex}
+            movie_id={item.id}
+          />
+        </div>
+      </li>
+    );
+  }
+);

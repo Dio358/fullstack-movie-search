@@ -9,63 +9,8 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store";
 
 function App() {
-  const [message, setMessage] = useState("");
   const [state, setState] = useState(0);
   const [token, setToken] = useState("");
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-  const logIn = async (userName: string, password: string) => {
-    try {
-      const res = await fetch(`${BASE_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: userName, password: password }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setState(1);
-        setMessage("");
-        setToken(data.token);
-      } else {
-        setMessage("Login failed");
-        console.log("Response:", data, res.status);
-      }
-    } catch (err) {
-      console.error("Failed to fetch from backend:", err);
-      setMessage("Failed to connect to backend.");
-    }
-  };
-
-  const createAccount = async (userName: string, password: string) => {
-    try {
-      const res = await fetch(`${BASE_URL}/createUser`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: userName, password: password }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setState(1);
-        setMessage("");
-      } else if (res.status == 409) {
-        setMessage("UserName exists already");
-      } else {
-        setMessage("An unexpected error occured");
-        console.log("Response:", data, res.status);
-      }
-    } catch (err) {
-      console.error("Failed to fetch from backend:", err);
-      setMessage("Failed to connect to backend.");
-    }
-  };
 
   return (
     <Provider store={store}>
@@ -80,13 +25,7 @@ function App() {
           height: "100vh",
         }}
       >
-        {state === 0 && (
-          <LoginBox
-            logIn={logIn}
-            createAccount={createAccount}
-            message={message}
-          />
-        )}
+        {state === 0 && <LoginBox setToken={setToken} setState={setState} />}
 
         {state !== 0 && (
           <div
