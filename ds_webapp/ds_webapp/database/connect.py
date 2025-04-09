@@ -42,9 +42,7 @@ class Database:
                 if attempt < self.max_retries - 1:
                     await asyncio.sleep(self.retry_delay)
                 else:
-                    raise RuntimeError(
-                        f"Failed to connect to database after {self.max_retries} attempts"
-                    )
+                    raise e
 
     async def query(self, sql: str, params: list = None):
         """

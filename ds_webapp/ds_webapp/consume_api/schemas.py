@@ -7,6 +7,10 @@ from pydantic import BaseModel
 
 
 class Movie(BaseModel):
+    """
+    A class reprenting movies and the fields + types they contain
+    """
+
     adult: bool
     backdrop_path: Optional[str] = None
     genre_ids: Optional[List[int]] = None

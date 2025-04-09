@@ -25,14 +25,14 @@ def test_app():
     """
     Fixture to provide a Flask test app with a protected route
     """
-    test_app = Flask(__name__)
+    testapp = Flask(__name__)
 
-    @test_app.route("/protected")
+    @testapp.route("/protected")
     @jwt_required
     def protected():
         return jsonify({"message": "Access granted"}), 200
 
-    return test_app
+    return testapp
 
 
 @pytest.fixture
@@ -41,8 +41,8 @@ def client():
     Fixture to provide a Flask test client.
     """
     app.config["TESTING"] = True
-    with app.test_client() as client:
-        yield client
+    with app.test_client() as c:
+        yield c
 
 
 @pytest.fixture()
@@ -57,7 +57,7 @@ def movie_list_example() -> list[Movie]:
 
 
 @pytest.fixture
-def api_url() -> str:
+def api_url() -> str:  # type: ignore
     """
     Load API url from .env file
     """
@@ -65,7 +65,7 @@ def api_url() -> str:
 
 
 @pytest.fixture
-def api_key() -> str:
+def api_key() -> str:  # type: ignore
     """
     Load API Key from .env file
     """
@@ -77,6 +77,6 @@ async def db():
     """
     returns database instance
     """
-    db = Database()
-    yield db
-    await db.close()
+    database = Database()
+    yield database
+    await database.close()

@@ -1,8 +1,10 @@
 """
 A file with database connection tests
 """
+
 import pytest
 from ..database.connect import Database
+
 
 @pytest.mark.asyncio
 async def test_connection():
@@ -59,7 +61,9 @@ async def test_insert():
                 """
         select_result = await db.query(sql=select, params=[])
         assert any(
-            row["id"] == 0 and row["name"] == "john doe" and row["password"] == "password"
+            row["id"] == 0
+            and row["name"] == "john doe"
+            and row["password"] == "password"
             for row in select_result
         )
 

@@ -42,9 +42,7 @@ class Welcome(Resource):
                     "description": "A status code 200 means successful and returns a message.",
                     "content": {
                         "application/json": {
-                            "example": {
-                                "message": "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
-                            }
+                            "example": {"message": "Welcome to the movie list app!!"}
                         }
                     },
                 }
@@ -55,11 +53,7 @@ class Welcome(Resource):
         """
         Returns a welcome message.
         """
-        return jsonify(
-            {
-                "message": "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
-            }
-        )
+        return jsonify({"message": "Welcome to the movie list app!!"})
 
 
 class Movies(Resource):
@@ -76,7 +70,7 @@ class Movies(Resource):
                     "description": "Returns a welcome message from the Movies endpoint.",
                     "content": {
                         "application/json": {
-                            "message": "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
+                            "message": "Welcome to the movie list app!!"
                         }
                     },
                 }
@@ -188,7 +182,7 @@ class MoviesWithSameGenres(Resource):
             ],
             "responses": {
                 200: {
-                    "description": "Returns a list of movies with the same genres as the input movie.",
+                    "description": "Returns list of movies with same genres as the input movie.",
                     "content": {
                         "application/json": {
                             "examples": {
@@ -274,7 +268,7 @@ class MoviesWithSimilarRuntime(Resource):
             ],
             "responses": {
                 200: {
-                    "description": "Returns a list of movies with the same genres as the input movie.",
+                    "description": "Returns list of movies with same genres as the input movie.",
                     "content": {
                         "application/json": {
                             "examples": {
@@ -417,9 +411,8 @@ class CreateUser(Resource):
 
         except asyncpg.UniqueViolationError:
             return {"error": "Username already exists"}, 409
-        except Exception as e:
-            print(f"Internal error: {e}")
-            return {"error": f"User creation failed: {e}"}, 500
+        except Exception:
+            return {"error": "Internal server error"}, 500
 
 
 class Login(Resource):
@@ -494,8 +487,7 @@ class Login(Resource):
                 return {"message": "login successful!", "token": f"{token}"}, 200
 
             return {"error": "Unathorized"}, 401
-        except Exception as e:
-            print(f"Internal error: {e}")
+        except Exception:
             return {"error": "Internal server error."}, 500
 
 
@@ -509,7 +501,7 @@ class FavoriteMovies(Resource):
             "tags": ["Favorites"],
             "security": [{"BearerAuth": []}],
             "summary": "Get user's favorite movies",
-            "description": "Retrieve a list of movies marked as favorites by the authenticated user",
+            "description": "Retrieve list of movies marked as favorites by the authenticated user",
             "responses": {
                 200: {
                     "description": "Successfully retrieved favorite movies",
@@ -541,6 +533,9 @@ class FavoriteMovies(Resource):
     )
     @jwt_required
     def get(self):
+        """
+        A function that returns the users favorite movies
+        """
         user_id = request.user["user_id"]
         favorites_table = Favorites(db=db)
 
@@ -556,12 +551,15 @@ class FavoriteMovies(Resource):
                     else []
                 )
             }, 200
-
-        except Exception:
+        except asyncpg.PostgresError:
             return {"message": "Internal server error"}, 500
 
 
 class AddFavorite(Resource):
+    """
+    Add a movie to favorites
+    """
+
     @swag_from(
         {
             "tags": ["Favorites"],
@@ -587,6 +585,9 @@ class AddFavorite(Resource):
     )
     @jwt_required
     def post(self, movie_id):
+        """
+        A function that adds a movie to a users favorites, given a user id
+        """
         user_id = request.user["user_id"]
 
         favorites_table = Favorites(db=db)
@@ -597,11 +598,15 @@ class AddFavorite(Resource):
         try:
             async_request(like_movie)
             return {"message": "OK"}, 201
-        except Exception as e:
-            return {"message": f"Internal server error: {e}"}, 500
+        except asyncpg.PostgresError:
+            return {"message": "Internal server error"}, 500
 
 
 class RemoveFavorite(Resource):
+    """
+    Remove movie from favorites
+    """
+
     @swag_from(
         {
             "tags": ["Favorites"],
@@ -627,6 +632,9 @@ class RemoveFavorite(Resource):
     )
     @jwt_required
     def delete(self, movie_id):
+        """
+        A function that removes a movie from a users favorites
+        """
         user_id = request.user["user_id"]
         favorites_table = Favorites(db=db)
 
@@ -655,7 +663,8 @@ class SearchMovie(Resource):
             "tags": ["Movies"],
             "security": [{"BearerAuth": []}],
             "summary": "Search movies by title",
-            "description": "Searches The Movie Database (TMDB) for movies matching the given title.",
+            "description": "Searches The Movie Database (TMDB) for movies "
+            "matching the given title.",
             "parameters": [
                 {
                     "name": "title",
@@ -695,6 +704,9 @@ class SearchMovie(Resource):
     )
     @jwt_required
     def get(self, title: str):
+        """
+        A function to search for a movie given the title
+        """
 
         if not title:
             return {"message": "Missing 'title' query parameter"}, 400
@@ -734,31 +746,3 @@ def add_endpoints(api: Api) -> None:
     api.add_resource(FavoriteMovies, "/movies/favorite")
     api.add_resource(AddFavorite, "/movies/favorite/<int:movie_id>")
     api.add_resource(RemoveFavorite, "/movies/favorite/<int:movie_id>")
-
-
-if __name__ == "__main__":
-    MOVIE = "Harry Potter"
-    search_result = search_movie(MOVIE)
-    print(search_result)
-    print(len(search_result))
-    if len(search_result) == 0:
-        print("No movie found")
-
-    # genres = get_movie_genres()
-    # search_result = search_movie("Harry Potter and the Philosopher's Stone")
-    #
-    # if not search_result:
-    #     print("error: Not Found.", 404)
-    #     exit(1)
-    #
-    # genres_to_include = search_result[0].get("genre_ids")
-    # assert genres is not None, "No genres found"
-    #
-    # genres_to_exclude = take_genre_set_difference(genres, genres_to_include)
-    #
-    # movies = search_movies_with_genres(
-    #     ",".join(str(id) for id in genres_to_include),
-    #     ",".join(str(id) for id in genres_to_exclude),
-    # )
-    #
-    # print(movies)

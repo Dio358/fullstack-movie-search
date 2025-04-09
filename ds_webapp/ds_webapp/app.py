@@ -5,13 +5,12 @@ It sets up the web framework, routes, and initializes the necessary services.
 
 from dotenv import load_dotenv
 from flasgger import Swagger
-from flask import Flask, request
+from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
 
 import ds_webapp.api
 
-# load environment variables
 load_dotenv()
 
 app = Flask(__name__)
@@ -39,12 +38,6 @@ app.config["SWAGGER"] = {
     },
     "security": [{"BearerAuth": []}],
 }
-
-
-@app.before_request
-def log_request_info():
-    print(f"Method: {request.method}")
-    print(f"Headers: {dict(request.headers)}")
 
 
 swagger = Swagger(app)

@@ -39,7 +39,8 @@ def verify_jwt_token(token):
 
 def jwt_required(func):
     """
-    A wrapper function for requests, verifies jwt tokens and stores the user_id and username in the request
+    A wrapper function for requests,
+    verifies jwt tokens and stores the user_id and username in the request
     """
 
     @wraps(func)

@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import List from "./List";
 import { Title } from "./Title";
-import createChartUrl from "../utils/chart";
+import { createBarChart } from "../utils/chart";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
 export const FavoritesTab = () => {
-  const [chartUrl, setChartUrl] = useState("");
   const favorites = useSelector((state: RootState) => state.favorites.movies);
+  const [BarChart, setBarChart] = useState<JSX.Element | null>(null);
 
   useEffect(() => {
-    setChartUrl(createChartUrl(favorites));
+    setBarChart(createBarChart(favorites));
   }, [favorites]);
 
   return (
@@ -27,7 +27,7 @@ export const FavoritesTab = () => {
       <List items={favorites} action="remove from" />
 
       <Title>Average Score</Title>
-      {chartUrl && <img src={chartUrl} alt="Chart of average scores" />}
+      {BarChart}
     </div>
   );
 };

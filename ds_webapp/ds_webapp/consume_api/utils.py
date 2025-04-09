@@ -2,6 +2,7 @@
 A file with utils to create and parse responses
 """
 
+from typing import Union, List, Dict
 from ds_webapp.consume_api.schemas import Movie
 
 
@@ -20,7 +21,7 @@ def clean_data(
 
 
 def create_ranked_movie_list(
-    movie_list: list[Movie], length: int, ranked: bool = False
+    movie_list: list[Movie], length: int
 ) -> list[dict[str : int | str]]:
     """
     A function which takes creates a list of the 'length' most popular movies
@@ -44,8 +45,8 @@ def create_movie_list(movie_list: list[Movie]) -> list[dict[str : int | str]]:
 
 
 def take_genre_set_difference(
-    genre_list: list[{str: str | int}], to_exclude: list[int]
-):
+    genre_list: List[Dict[str, Union[str, int]]], to_exclude: List[int]
+) -> list[int]:
     """
     Takes list of all possible genres and excludes genres listed in to_exlude
     :param genre_list: list of all possible genres

@@ -12,7 +12,6 @@ from ds_webapp.consume_api.schemas import Movie
 
 load_dotenv()
 
-# setting API url and key
 API_URL = os.getenv("API_URL")
 API_KEY = os.getenv("API_KEY")
 
@@ -154,29 +153,3 @@ def search_movies_with_duration(min_duration: int, max_duration: int) -> list[Mo
         return response.json().get("results")
 
     raise response
-
-
-if __name__ == "__main__":
-    # # workflow of getting only movies with same genre as "Harry Potter and the Philosopher's Stone"
-    # genres = get_movie_genres()
-    # print(genres)
-    # genres_to_include = search_movie("Harry Potter and the Philosopher's Stone")[0][
-    #     "genre_ids"
-    # ]
-    # genres_to_exclude = take_genre_set_difference(genres, genres_to_include)
-    # print(genres_to_exclude)
-    # print(genres_to_include)
-    # print(
-    #     search_movies_with_genres(
-    #         ",".join(str(id) for id in genres_to_include),
-    #         ",".join(str(id) for id in genres_to_exclude),
-    #     )
-    # )
-
-    # workflow for getting movies with duration +- 10 of duration of certain movie
-    result2 = get_movie_details(970450)
-    print(result2)
-
-    result = search_movies_with_duration(90, 100)
-    print(result)
-
