@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from "react";
-import List from "./List";
-import { Movie } from "../interfaces";
-import { Title } from "./Title";
-import { Token } from "./Token";
-import { fetchMostPopularMovies } from "../api/movieApi";
+import List from "../list/List";
+import { Movie } from "../../interfaces";
+import { Title } from "../elements/Title";
+import { Token } from "../login/Token";
+import { fetchMostPopularMovies } from "../../api/movieApi";
 
-export const DiscoverTab = () => {
+export const PopularTab = () => {
   const [selectedLength, setSelectedLength] = useState(1);
   const [movies, setMovies] = useState<Movie[] | null>(null);
   const token = useContext(Token);
@@ -17,9 +17,16 @@ export const DiscoverTab = () => {
     }
   };
 
+  console.log("token: ", token);
   useEffect(() => {
+    console.log("token: ", token);
+
     if (token) getMovies();
   }, [token]);
+
+  useEffect(() => {
+    if (movies) console.log("movies: ", movies);
+  }, [movies]);
 
   return (
     <div

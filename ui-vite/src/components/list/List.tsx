@@ -1,4 +1,4 @@
-import { Movie } from "../interfaces";
+import { Movie } from "../../interfaces";
 import { useEffect, useState, useMemo } from "react";
 import styles from "./scrollableList.module.css";
 import { ListItem } from "./ListItem";

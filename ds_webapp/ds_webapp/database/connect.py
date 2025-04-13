@@ -35,10 +35,8 @@ class Database:
                     port=5432,
                     timeout=5.0,
                 )
-                print(f"Database connection successful on attempt {attempt + 1}")
                 return
             except asyncpg.PostgresConnectionError as e:
-                print(f"Connection attempt {attempt + 1} failed: {e}")
                 if attempt < self.max_retries - 1:
                     await asyncio.sleep(self.retry_delay)
                 else:
@@ -64,4 +62,3 @@ class Database:
         """
         if self.conn:
             await self.conn.close()
-            print("Database connection closed")

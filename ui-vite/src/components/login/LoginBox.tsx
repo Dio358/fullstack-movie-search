@@ -1,9 +1,9 @@
 import React from "react";
-import { createAccount, logIn } from "../api/authApi";
-import { useAppDispatch } from "../redux/hooks";
-import {} from "../redux/favorites-slice";
-import { AppDispatch } from "../redux/store";
-import { fetchFavorites } from "../redux/favorites-thunks";
+import { createAccount, logIn } from "../../api/authApi";
+import { useAppDispatch } from "../../redux/hooks";
+import {} from "../../redux/favorites-slice";
+import { AppDispatch } from "../../redux/store";
+import { fetchFavorites } from "../../redux/favorites-thunks";
 
 const LoginBox = ({
   setToken,
@@ -18,6 +18,7 @@ const LoginBox = ({
   const dispatch: AppDispatch = useAppDispatch();
 
   const loadFavorites = (token: string) => async () => {
+    console.log("fetching favorites with token", token);
     dispatch(fetchFavorites(token));
   };
 
@@ -25,8 +26,8 @@ const LoginBox = ({
     try {
       const result = await logIn(userName, password);
       if (result) {
-        await loadFavorites(result.token)();
-        setToken(result.token);
+        await loadFavorites(result)();
+        setToken(result);
         setState(1);
         setMessage("");
       } else {
@@ -41,8 +42,7 @@ const LoginBox = ({
   const handleCreateAccount = async (userName: string, password: string) => {
     const result = await createAccount(userName, password);
     if (result.success) {
-      setState(1);
-      setMessage("");
+      setMessage("User created successfully! Please log in");
     } else {
       setMessage(result.message || "Account creation failed");
     }

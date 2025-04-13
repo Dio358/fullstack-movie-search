@@ -13,7 +13,7 @@ from flask import Flask, jsonify
 
 
 from ds_webapp.app import app
-from ds_webapp.consume_api.schemas import Movie
+from ds_webapp.api_client.schemas import Movie
 from ds_webapp.database.connect import Database
 from ds_webapp.authentication.authentication import jwt_required
 

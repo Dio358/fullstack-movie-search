@@ -52,8 +52,8 @@ def jwt_required(func):
         try:
             user_data = verify_jwt_token(token)
             request.user = user_data
-        except ValueError as e:
-            return {"error": str(e)}, 401
+        except ValueError:
+            return {"error": "Unauthorized"}, 401
         return func(*args, **kwargs)
 
     return wrapper

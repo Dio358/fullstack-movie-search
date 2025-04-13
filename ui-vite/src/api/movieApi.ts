@@ -25,8 +25,6 @@ export const fetchMostPopularMovies = async (token: string, count: number = 20) 
   };
   
 export const addMovieToFavorites = async (token: string, movie_id: number) => {
-    console.log("Adding movie to favorites:", movie_id);
-    console.log("Token:", token);
     try {
       await fetch(
         `${BASE_URL}/movies/favorite/` + encodeURIComponent(movie_id),
@@ -76,6 +74,7 @@ export const fetchFavoriteMovies = async (token: string) => {
     });
 
     const data = await res.json();
+    console.log("results: ", data)
 
     if (res.ok) {
       return data.results;

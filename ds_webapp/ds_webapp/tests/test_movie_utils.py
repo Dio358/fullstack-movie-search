@@ -2,7 +2,7 @@
 A file for testing utils.py
 """
 
-from ds_webapp.consume_api.utils import create_movie_list, create_ranked_movie_list
+from ds_webapp.api_client.utils import create_movie_list, create_ranked_movie_list
 
 
 def test_create_movie_list(movie_list_example):

@@ -1,16 +1,20 @@
 import { useState } from "react";
-import LoginBox from "./components/LoginBox";
-import { SideBar } from "./components/sideBar";
-import { DiscoverTab } from "./components/DiscoverTab";
-import { FavoritesTab } from "./components/FavoritesTab";
-import { SearchTab } from "./components/SearchTab";
-import { Token } from "./components/Token";
+import LoginBox from "./components/login/LoginBox";
+import { SideBar } from "./components/bars/sideBar";
+import { PopularTab } from "./components/tabs/PopularTab";
+import { FavoritesTab } from "./components/tabs/FavoritesTab";
+import { SearchTab } from "./components/tabs/SearchTab";
+import { Token } from "./components/login/Token";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 
 function App() {
   const [state, setState] = useState(0);
   const [token, setToken] = useState("");
+  const logOff = () => {
+    setState(0);
+    setToken("");
+  };
 
   return (
     <Provider store={store}>
@@ -44,12 +48,12 @@ function App() {
               onClick={() => (state !== 1 ? setState(1) : undefined)}
               onClick1={() => (state !== 2 ? setState(2) : undefined)}
               onClick2={() => (state !== 3 ? setState(3) : undefined)}
-              onClick3={() => setState(0)}
+              onClick3={() => logOff()}
               state={state}
             />
 
             <Token.Provider value={token}>
-              {state === 1 && <DiscoverTab />}
+              {state === 1 && <PopularTab />}
 
               {state === 2 && <FavoritesTab />}
 

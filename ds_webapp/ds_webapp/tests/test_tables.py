@@ -84,10 +84,6 @@ async def test_favorites(db):
 
         await favorites_table.unlike_movie(movie_id=movie_id, user_id=user_id)
         favorites_after_delete = await favorites_table.get_favorites(user_id=user_id)
-        favorites_after_delete = await favorites_table.get_favorites(user_id=user_id)
-        favorites_after_delete = await favorites_table.get_favorites(user_id=user_id)
-        favorites_after_delete = await favorites_table.get_favorites(user_id=user_id)
-        favorites_after_delete = await favorites_table.get_favorites(user_id=user_id)
         assert not favorites_after_delete
 
     finally:

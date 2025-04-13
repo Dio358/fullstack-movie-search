@@ -1,13 +1,16 @@
 import { memo, useContext, useEffect, useState } from "react";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { addMovieToFavorites, deleteMovieFromFavorites } from "../api/movieApi";
-import { Token } from "./Token";
-import { AppDispatch, RootState } from "../redux/store";
-import { useAppDispatch } from "../redux/hooks";
-import { addMovie, deleteMovie } from "../redux/favorites-slice";
+import {
+  addMovieToFavorites,
+  deleteMovieFromFavorites,
+} from "../../api/movieApi";
+import { Token } from "../login/Token";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useAppDispatch } from "../../redux/hooks";
+import { addMovie, deleteMovie } from "../../redux/favorites-slice";
 import { useSelector } from "react-redux";
-import { Movie } from "../interfaces";
+import { Movie } from "../../interfaces";
 import { Tooltip } from "@mui/material";
 
 export const AddToFavoritesButton = memo(

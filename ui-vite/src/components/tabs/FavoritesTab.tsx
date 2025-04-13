@@ -1,9 +1,9 @@
 import { JSX, useEffect, useState } from "react";
-import List from "./List";
-import { Title } from "./Title";
-import { createBarChart } from "../utils/chart";
+import List from "../list/List";
+import { Title } from "../elements/Title";
+import { createBarChart } from "../../utils/chart";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 
 export const FavoritesTab = () => {
   const favorites = useSelector((state: RootState) => state.favorites.movies);

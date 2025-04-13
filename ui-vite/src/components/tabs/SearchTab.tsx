@@ -1,14 +1,14 @@
 import { useState, useContext, useEffect } from "react";
-import List from "./List";
-import { Movie } from "../interfaces";
+import List from "../list/List";
+import { Movie } from "../../interfaces";
 import AsyncSelect from "react-select/async";
-import { Title } from "./Title";
-import { Token } from "./Token";
+import { Title } from "../elements/Title";
+import { Token } from "../login/Token";
 import {
   searchMovies,
   fetchSameGenreMovies,
   fetchSimilarRuntimeMovies,
-} from "../api/movieApi"; // Adjust path as needed
+} from "../../api/movieApi";
 
 export const SearchTab = () => {
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);

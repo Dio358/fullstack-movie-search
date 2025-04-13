@@ -36,6 +36,8 @@ black = "^25.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+asyncio_mode = "auto"
+asyncio_fixture_scope = "function"
 
 [tool.pytest.ini_options]
 testpaths = ["ds_webapp/tests"]
@@ -48,4 +50,3 @@ disable = ["C0301"]
 
 [tool.pylint."TYPECHECK"]
 generated-members = ["numpy.*", "torch.*"]
-

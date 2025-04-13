@@ -3,12 +3,13 @@ A file containing methods that call The Movie Database API
 """
 
 import os
-from typing import Any
+from typing import Any, List
 
 import requests
 from flask.cli import load_dotenv
 
-from ds_webapp.consume_api.schemas import Movie
+from ds_webapp.api_client.schemas import Movie
+from ds_webapp.api_client.utils import take_genre_set_difference
 
 load_dotenv()
 
@@ -107,6 +108,28 @@ def get_movie_genres() -> list[Any] | tuple[dict[str, str], int]:
     raise response
 
 
+def get_movies_with_same_genres(movie_title: str) -> List[Any]:
+    """
+    Given a movie title, returns movies that share the same genres.
+    """
+    genres = get_movie_genres()
+    search_result = search_movie(movie_title)
+
+    if not search_result:
+        return []
+
+    genres_to_include = search_result[0].get("genre_ids")
+    if genres_to_include is None or not genres:
+        return []
+
+    genres_to_exclude = take_genre_set_difference(genres, genres_to_include)
+
+    return search_movies_with_genres(
+        ",".join(str(genre_id) for genre_id in genres_to_include),
+        ",".join(str(genre_id) for genre_id in genres_to_exclude),
+    )
+
+
 def get_movie_details(movie_id: int) -> dict[str, int | str | None]:
     """
     Get detail info about movie from movie_db
@@ -153,3 +176,25 @@ def search_movies_with_duration(min_duration: int, max_duration: int) -> list[Mo
         return response.json().get("results")
 
     raise response
+
+
+def get_movies_with_similar_runtime(movie_title: str) -> List[Any]:
+    """
+    Given a movie title, return movies with a runtime within +/- 10 minutes.
+    """
+    search_result = search_movie(movie_title)
+    if not search_result:
+        return []
+
+    movie_id = search_result[0].get("id")
+    if movie_id is None:
+        return []
+
+    details = get_movie_details(movie_id)
+    if not details or details.get("runtime") is None:
+        return []
+
+    duration = details["runtime"]
+    return search_movies_with_duration(
+        min_duration=duration - 10, max_duration=duration + 10
+    )

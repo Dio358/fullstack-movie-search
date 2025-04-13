@@ -8,20 +8,18 @@ import asyncio
 
 import asyncpg
 from flasgger import swag_from
-from flask import Response, jsonify, request
+from flask import jsonify, request
 from flask_restful import Resource, Api, reqparse
 
 
 from ds_webapp.authentication.authentication import create_jwt_token, jwt_required
-from ds_webapp.consume_api.consume_api import (
+from ds_webapp.api_client.tmdb_client import (
+    get_movies_with_same_genres,
+    get_movies_with_similar_runtime,
     get_popular_movies,
-    get_movie_genres,
     search_movie,
-    search_movies_with_genres,
     get_movie_details,
-    search_movies_with_duration,
 )
-from ds_webapp.consume_api.utils import take_genre_set_difference
 from ds_webapp.database.connect import Database
 from ds_webapp.database.tables import Favorites, Users
 
@@ -36,13 +34,12 @@ class Welcome(Resource):
     @swag_from(
         {
             "tags": ["Welcome"],
-            "security": [{"BearerAuth": []}],
             "responses": {
                 200: {
-                    "description": "A status code 200 means successful and returns a message.",
+                    "description": "Returns a welcome message in a <span> tag.",
                     "content": {
-                        "application/json": {
-                            "example": {"message": "Welcome to the movie list app!!"}
+                        "text/html": {
+                            "example": "<span>Welcome to the movie list app!!</span>"
                         }
                     },
                 }
@@ -51,45 +48,13 @@ class Welcome(Resource):
     )
     def get(self):
         """
-        Returns a welcome message.
+        Returns a welcome message wrapped in an HTML <span>.
         """
-        return jsonify({"message": "Welcome to the movie list app!!"})
-
-
-class Movies(Resource):
-    """
-    A class to send requests related to movies.
-    """
-
-    @swag_from(
-        {
-            "tags": ["Movies"],
-            "security": [{"BearerAuth": []}],
-            "responses": {
-                200: {
-                    "description": "Returns a welcome message from the Movies endpoint.",
-                    "content": {
-                        "application/json": {
-                            "message": "Welcome to the movie list app!!"
-                        }
-                    },
-                }
-            },
-        }
-    )
-    @jwt_required
-    def get(self) -> Response:
-        """
-        Returns a welcome message from the Movies endpoint.
-
-        :return: 200 OK with a welcome message.
-        """
-        return Response(
-            {
-                "Welcome to the movie list app!! Please go to apidocs to see the endpoint swagger!"
-            },
-            200,
-        )
+        html = "<span>Welcome to the movie list app!!</span>"
+        response = jsonify(html)
+        response.headers["Content-Type"] = "text/html"
+        response.headers["Cache-Control"] = f"public, max-age={86400}"
+        return response
 
 
 class MostPopular(Resource):
@@ -99,7 +64,7 @@ class MostPopular(Resource):
 
     @swag_from(
         {
-            "tags": ["Movies"],
+            "tags": ["Popular"],
             "security": [{"BearerAuth": []}],
             "parameters": [
                 {
@@ -127,8 +92,9 @@ class MostPopular(Resource):
                         }
                     },
                 },
+                401: {"description": "Unauthorized"},
                 400: {
-                    "description": "Invalid value for 'n'. Must be between 1 and 20.",
+                    "description": "Bad Request",
                 },
                 500: {
                     "description": "Internal server error.",
@@ -139,27 +105,25 @@ class MostPopular(Resource):
     @jwt_required
     def get(self, n: int = 1) -> Tuple[List[Any], int] | Tuple[Dict[str, str], int]:
         """
-        Returns a list of the n most popular movies.
-
-        :param n: Number of movies to return (default = 1). Must be between 1 and 20.
-        :return:
-            - 200 OK with list of movies
-            - 400 Bad Request if n is out of range
-            - 500 Internal Server Error for unhandled exceptions
+        Returns a list of the n most popular movies (default = 1). Must be between 1 and 20.
         """
         try:
             if not 1 <= n <= 20:
-                return {
-                    "error": "Invalid value for 'n'. It should be between 1 and 20."
-                }, 400
+                # Invalid value for 'n'. It should be between 1 and 20.
+                response = jsonify({"error": "Bad Request"})
+                response.headers["Cache-Control"] = "no-store"
+                response.status_code = 400
+                return response
 
-            return get_popular_movies()[:n], 200
-        except HTTPException as e:
-            return e
+            response = jsonify(get_popular_movies()[:n])
+            response.headers["Cache-Control"] = f"public, max-age={3600}"
+            return response
         # pylint: disable=locally-disabled, broad-exception-caught
-        except Exception as e:
-            print("exception: ", e)
-            return {"error": "Internal server error"}, 500
+        except Exception:
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class MoviesWithSameGenres(Resource):
@@ -169,7 +133,7 @@ class MoviesWithSameGenres(Resource):
 
     @swag_from(
         {
-            "tags": ["Movies"],
+            "tags": ["Genres"],
             "security": [{"BearerAuth": []}],
             "parameters": [
                 {
@@ -197,9 +161,7 @@ class MoviesWithSameGenres(Resource):
                         }
                     },
                 },
-                400: {
-                    "description": "Invalid input value.",
-                },
+                401: {"description": "Unauthorized"},
                 404: {
                     "description": "Not found.",
                 },
@@ -215,37 +177,22 @@ class MoviesWithSameGenres(Resource):
     ) -> Tuple[List[Any], int] | Tuple[Dict[str, str], int] | Tuple[str, int]:
         """
         Returns a list of movies that share all genres with the given movie.
-
-        :param movie: Title of the movie to search by.
-        :return:
-            - 200 OK with list of matching movies
-            - 404 Not Found if the movie does not exist
-            - 500 Internal Server Error for unexpected failures
         """
         try:
-            genres = get_movie_genres()
-            search_result = search_movie(movie)
+            movies = get_movies_with_same_genres(movie)
 
-            if not search_result:
+            if not movies:
                 return {"error": "Not Found."}, 404
 
-            genres_to_include = search_result[0].get("genre_ids")
-            assert genres is not None, "No genres found"
-
-            genres_to_exclude = take_genre_set_difference(genres, genres_to_include)
-
-            movies = search_movies_with_genres(
-                ",".join(str(id) for id in genres_to_include),
-                ",".join(str(id) for id in genres_to_exclude),
-            )
-            return movies, 200
-
-        except HTTPException as e:
-            return e
+            response = jsonify(movies)
+            response.headers["Cache-Control"] = f"public, max-age={86400}"
+            return response
         # pylint: disable=locally-disabled, broad-exception-caught
-        except Exception as e:
-            print("exception: ", e)
-            return {"error": "Internal server error"}, 500
+        except Exception:
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class MoviesWithSimilarRuntime(Resource):
@@ -255,7 +202,7 @@ class MoviesWithSimilarRuntime(Resource):
 
     @swag_from(
         {
-            "tags": ["Movies"],
+            "tags": ["Runtime"],
             "security": [{"BearerAuth": []}],
             "parameters": [
                 {
@@ -301,43 +248,28 @@ class MoviesWithSimilarRuntime(Resource):
     ) -> Tuple[List[Any], int] | Tuple[Dict[str, str], int] | Tuple[str, int]:
         """
         Given a movie, returns movies with a similar runtime (+- 10 minutes).
-
-        :param movie: Title of the movie to search by.
-        :return:
-            - 200 OK with list of matching movies
-            - 404 Not Found if the movie does not exist
-            - 500 Internal Server Error for unexpected failures
         """
         try:
-            search_result = search_movie(movie)
+            result = get_movies_with_similar_runtime(movie)
 
-            if not search_result:
+            if not result:
                 return {"error": "Not Found."}, 404
 
-            movie_id = search_result[0].get("id")
-            assert movie_id is not None, "Unknown movie_id"
-
-            detailed_search_result = get_movie_details(movie_id)
-
-            if not detailed_search_result:
-                return {"error": "Not Found."}, 404
-
-            duration = detailed_search_result.get("runtime")
-            assert duration is not None, "Movie duration not found"
-
-            result = search_movies_with_duration(
-                min_duration=duration - 10, max_duration=duration + 10
-            )
-            assert result is not None, "Movies with similar duration not found"
-
-            return result, 200
+            response = jsonify(result)
+            response.headers["Cache-Control"] = f"public, max-age={3600}"
+            return response
 
         except HTTPException as e:
-            return e
+            response = jsonify({"error": e})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 404
+            return response
         # pylint: disable=locally-disabled, broad-exception-caught
-        except Exception as e:
-            print("error:", e)
-            return {"error": "Internal server error"}, 500
+        except Exception:
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class CreateUser(Resource):
@@ -382,8 +314,7 @@ class CreateUser(Resource):
                 }
             ],
             "responses": {
-                200: {"description": "User created successfully"},
-                400: {"description": "Invalid input"},
+                201: {"description": "User created successfully"},
                 409: {"description": "Username already exists"},
                 500: {"description": "Internal server error"},
             },
@@ -391,11 +322,12 @@ class CreateUser(Resource):
     )
     def post(self):
         """
-        A function to send a post request to create a new user
+        Creates user and returns 201 OK if username is unique
         """
         args = self.reqparse.parse_args()
         username = args["username"]
         password = args["password"]
+
         user_table = Users(db=db)
 
         async def create_user_async():
@@ -405,14 +337,26 @@ class CreateUser(Resource):
             result = async_request(create_user_async)
 
             if result:
-                return {"message": f"User {username} created successfully"}, 200
-            else:
-                return {"error": "Username already exists"}, 409
+                response = jsonify({"message": f"User {username} created successfully"})
+                response.headers["Cache-Control"] = "no-store"
+                response.status_code = 201
+                return response
+
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
         except asyncpg.UniqueViolationError:
-            return {"error": "Username already exists"}, 409
+            response = jsonify({"error": "Username already exists"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 409
+            return response
         except Exception:
-            return {"error": "Internal server error"}, 500
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class Login(Resource):
@@ -440,7 +384,7 @@ class Login(Resource):
 
     @swag_from(
         {
-            "tags": ["Login"],
+            "tags": ["Users"],
             "parameters": [
                 {
                     "name": "body",
@@ -458,14 +402,14 @@ class Login(Resource):
             ],
             "responses": {
                 200: {"description": "login successfull"},
-                400: {"description": "Invalid input"},
+                401: {"description": "Unauthorized (wrong username or password)"},
                 500: {"description": "Internal server error"},
             },
         }
     )
     def post(self):
         """
-        A function to send a post request to log in
+        Returns a bearer token if the credentials are valid
         """
         args = self.reqparse.parse_args()
         username = args["username"]
@@ -481,14 +425,23 @@ class Login(Resource):
                 token = create_jwt_token(
                     {
                         "user_id": uid,
-                        "username": "JohnDoe123",
+                        "username": username,
                     }
                 )
-                return {"message": "login successful!", "token": f"{token}"}, 200
 
-            return {"error": "Unathorized"}, 401
+                response = jsonify(token)
+                response.headers["Cache-Control"] = f"public, max-age={3600*3}"
+                return response
+
+            response = jsonify({"error": "Unathorized"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 401
+            return response
         except Exception:
-            return {"error": "Internal server error."}, 500
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class FavoriteMovies(Resource):
@@ -534,25 +487,40 @@ class FavoriteMovies(Resource):
     @jwt_required
     def get(self):
         """
-        A function that returns the users favorite movies
+        Returns a list of the users favorite movies
         """
+
         user_id = request.user["user_id"]
         favorites_table = Favorites(db=db)
+        print("user id:", user_id)
 
         async def get_favorites():
             return await favorites_table.get_favorites(user_id=user_id)
 
         try:
             result = async_request(get_favorites)
-            return {
-                "results": (
-                    [get_movie_details(dict(row).get("movie_id")) for row in result]
-                    if result
-                    else []
-                )
-            }, 200
+            response = jsonify(
+                {
+                    "results": (
+                        [get_movie_details(dict(row).get("movie_id")) for row in result]
+                        if result
+                        else []
+                    )
+                }
+            )
+            response.headers["Cache-Control"] = "no-store"
+            return response
         except asyncpg.PostgresError:
-            return {"message": "Internal server error"}, 500
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
+        except Exception as e:
+            print("error :", e)
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class AddFavorite(Resource):
@@ -586,7 +554,7 @@ class AddFavorite(Resource):
     @jwt_required
     def post(self, movie_id):
         """
-        A function that adds a movie to a users favorites, given a user id
+        Adds movie to a users favorites, given a user id
         """
         user_id = request.user["user_id"]
 
@@ -597,9 +565,20 @@ class AddFavorite(Resource):
 
         try:
             async_request(like_movie)
-            return {"message": "OK"}, 201
+            response = jsonify({"message": "OK"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 201
+            return response
         except asyncpg.PostgresError:
-            return {"message": "Internal server error"}, 500
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
+        except Exception:
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class RemoveFavorite(Resource):
@@ -633,7 +612,7 @@ class RemoveFavorite(Resource):
     @jwt_required
     def delete(self, movie_id):
         """
-        A function that removes a movie from a users favorites
+        Removes a movie from a users favorites
         """
         user_id = request.user["user_id"]
         favorites_table = Favorites(db=db)
@@ -645,12 +624,14 @@ class RemoveFavorite(Resource):
 
         try:
             async_request(unlike_movie)
-            return {
-                "message": "OK",
-                "movie_id": movie_id,
-            }, 200
-        except Exception:
-            return {"message": "Internal server error"}, 500
+            response = jsonify({"message": "OK"})
+            response.headers["Cache-Control"] = "no-store"
+            return response
+        except Exception as e:
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 class SearchMovie(Resource):
@@ -660,7 +641,7 @@ class SearchMovie(Resource):
 
     @swag_from(
         {
-            "tags": ["Movies"],
+            "tags": ["Search"],
             "security": [{"BearerAuth": []}],
             "summary": "Search movies by title",
             "description": "Searches The Movie Database (TMDB) for movies "
@@ -712,9 +693,15 @@ class SearchMovie(Resource):
             return {"message": "Missing 'title' query parameter"}, 400
         try:
             results = search_movie(title)
-            return {"results": results}, 200
+            response = jsonify({"results": results})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 200
+            return response
         except Exception:
-            return {"message": "Internal server error"}, 500
+            response = jsonify({"message": "Internal server error"})
+            response.headers["Cache-Control"] = "no-store"
+            response.status_code = 500
+            return response
 
 
 def async_request(async_function):
@@ -734,14 +721,14 @@ def add_endpoints(api: Api) -> None:
 
     :param api: Flask-RESTful API object.
     """
-    api.add_resource(Welcome, "/")
+    api.add_resource(Welcome, "/", "/movies")
     api.add_resource(SearchMovie, "/movies/<string:title>")
     api.add_resource(
         MostPopular, "/movies/most_popular", "/movies/most_popular/<int:n>"
     )
     api.add_resource(MoviesWithSameGenres, "/movies/same_genres/<string:movie>")
     api.add_resource(MoviesWithSimilarRuntime, "/movies/similar_runtime/<string:movie>")
-    api.add_resource(CreateUser, "/createUser")
+    api.add_resource(CreateUser, "/user")
     api.add_resource(Login, "/login")
     api.add_resource(FavoriteMovies, "/movies/favorite")
     api.add_resource(AddFavorite, "/movies/favorite/<int:movie_id>")

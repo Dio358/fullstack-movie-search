@@ -1,6 +1,6 @@
 import { memo } from "react";
-import { Movie } from "../interfaces";
-import { AddToFavoritesButton } from "./AddToFavoritesButton";
+import { Movie } from "../../interfaces";
+import { AddToFavoritesButton } from "../buttons/AddToFavoritesButton";
 
 export const ListItem = memo(
   ({
@@ -14,7 +14,6 @@ export const ListItem = memo(
     hoveredIndex: number | null;
     setHoveredIndex: (index: number | null) => void;
   }) => {
-    console.log("item: ", item);
     return (
       <li
         key={item.id}

@@ -3,7 +3,7 @@ A file with utils to create and parse responses
 """
 
 from typing import Union, List, Dict
-from ds_webapp.consume_api.schemas import Movie
+from ds_webapp.api_client.schemas import Movie
 
 
 def clean_data(
