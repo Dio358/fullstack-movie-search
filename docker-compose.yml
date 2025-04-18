@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: "pgres"
+      POSTGRES_PASSWORD: "pgres"
+      POSTGRES_DB: "pgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+    - app-network
+
+
+  app:
+    build: 
+      context: ./ds_webapp
+      dockerfile: ./dockerfile 
+    restart: always
+    ports:
+      - "5000:5000"
+    command: ["poetry", "run", "app"]
+    networks:
+      - app-network
+  
+  frontend:
+    build:
+      context: ./ui-vite
+      dockerfile: ./dockerfile 
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    environment:
+      - VITE_BASE_URL=http://localhost:5000
+
+
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  pgdata:

@@ -1,0 +1,27 @@
+# ./Dockerfile
+
+FROM python:3.11-slim
+
+# Install dependencies for Poetry
+RUN apt-get update && apt-get install -y curl
+
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Add Poetry to PATH
+ENV PATH="/root/.local/bin:$PATH"
+
+# Set working directory
+WORKDIR /app
+
+# Copy pyproject.toml and poetry.lock
+COPY pyproject.toml poetry.lock* ./
+
+# Install dependencies (no virtualenv since we're in a container)
+RUN poetry config virtualenvs.create false && poetry install --no-root
+
+# Copy the rest of the app code
+COPY . .
+
+# Command to run app (can be overridden in docker-compose)
+CMD ["poetry", "run", "app"]

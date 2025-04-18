@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "ds-webapp"
+version = "0.1.0"
+description = ""
+authors = ["Dio Ngei Okparaji"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^3.1.0"
+flask-restful = "^0.3.10"
+flasgger = "^0.9.7.1"
+pytest = "^8.3.5"
+python-dotenv = "^1.0.1"
+requests = "^2.32.3"
+responses = "^0.25.7"
+pydantic = "^2.10.6"
+psycopg2-binary = "^2.9.10"
+bcrypt = "^4.3.0"
+asyncio = "^3.4.3"
+asyncpg = "^0.30.0"
+pytest-asyncio = "^0.26.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pyjwt = "^2.10.1"
+flask-cors = "^5.0.1"
+
+[tool.poetry.scripts]
+app = "ds_webapp.app:start"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pylint = "^3.3.5"
+black = "^25.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+asyncio_mode = "auto"
+asyncio_fixture_scope = "function"
+
+[tool.pytest.ini_options]
+testpaths = ["ds_webapp/tests"]
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = ["W0621"]
+
+[tool.pylint."FORMAT"]
+disable = ["C0301"]
+
+[tool.pylint."TYPECHECK"]
+generated-members = ["numpy.*", "torch.*"]
