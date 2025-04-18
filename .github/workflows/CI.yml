@@ -3,92 +3,48 @@ name: CI
 on: [pull_request]
 
 jobs:
-  setup:
+  docker-tests:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: pgres
+          POSTGRES_PASSWORD: pgres
+          POSTGRES_DB: pgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U pgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
+      - name: Set up Docker Compose
+        run: docker compose -f docker-compose.yml up -d --build
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-in-project: true
+      - name: Wait for containers to be healthy
+        run: |
+          echo "Waiting for DB and app to be healthy..."
+          docker compose ps
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Run Black formatting check
+        run: docker compose exec app poetry run black --check --diff ds_webapp/
 
-      - name: Install dependencies
-        run: poetry install --no-interaction --no-root
+      - name: Run Pylint
+        run: docker compose exec app poetry run pylint ds_webapp/
 
-  formatting:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - name: Run tests
+        env:
+          API_URL: "https://api.example.com"
+          API_KEY: "your_secret_api_key"
+        run: docker compose exec -e API_URL -e API_KEY app poetry run pytest
 
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-in-project: true
-      - name: Run Black
-        run: ls -la ; poetry run black --check --diff  ds_webapp/*
-
-  linting:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-in-project: true
-
-      - name: Check linting - run Pylint
-        run: ls -la ;  poetry run pylint  ds_webapp/*
-
-  test:
-    runs-on: ubuntu-latest
-    env:
-      API_URL: "https://api.example.com"
-      API_KEY: "your_secret_api_key"
-    needs: setup
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-in-project: true
-
-      - name: Run Tests
-        run: poetry run pytest
+      - name: Tear down
+        if: always()
+        run: docker compose down
