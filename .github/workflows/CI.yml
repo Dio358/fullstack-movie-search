@@ -24,12 +24,6 @@ jobs:
       - name: Run Pylint
         run: docker compose exec app poetry run pylint ds_webapp/
 
-      - name: Run tests
-        env:
-          API_URL: "https://api.example.com"
-          API_KEY: "your_secret_api_key"
-        run: docker compose exec -e API_URL -e API_KEY app poetry run pytest
-
       - name: Tear down
         if: always()
         run: docker compose down

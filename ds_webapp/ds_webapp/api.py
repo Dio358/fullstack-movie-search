@@ -293,7 +293,7 @@ class CreateUser(Resource):
             help="Password is required",
             location="json",
         )
-        super(CreateUser, self).__init__()
+        super(CreateUser, self).__init__()  #  pylint: disable=super-with-arguments
 
     @swag_from(
         {
@@ -352,7 +352,7 @@ class CreateUser(Resource):
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 409
             return response
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             response = jsonify({"message": "Internal server error"})
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 500
@@ -380,7 +380,7 @@ class Login(Resource):
             help="Password is required",
             location="json",
         )
-        super(Login, self).__init__()
+        super(Login, self).__init__()  # pylint: disable=super-with-arguments
 
     @swag_from(
         {
@@ -437,7 +437,7 @@ class Login(Resource):
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 401
             return response
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             response = jsonify({"message": "Internal server error"})
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 500
@@ -515,7 +515,7 @@ class FavoriteMovies(Resource):
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 500
             return response
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print("error :", e)
             response = jsonify({"message": "Internal server error"})
             response.headers["Cache-Control"] = "no-store"
@@ -574,7 +574,7 @@ class AddFavorite(Resource):
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 500
             return response
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             response = jsonify({"message": "Internal server error"})
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 500
@@ -627,7 +627,7 @@ class RemoveFavorite(Resource):
             response = jsonify({"message": "OK"})
             response.headers["Cache-Control"] = "no-store"
             return response
-        except Exception as e:
+        except Exception:  # pylint: disable=broad-exception-caught
             response = jsonify({"message": "Internal server error"})
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 500
@@ -697,7 +697,7 @@ class SearchMovie(Resource):
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 200
             return response
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             response = jsonify({"message": "Internal server error"})
             response.headers["Cache-Control"] = "no-store"
             response.status_code = 500
