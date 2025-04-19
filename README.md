@@ -1,16 +1,16 @@
-# 🎬 Full-Stack Movie App
+# Full-Stack Movie App
 
 A fully containerized web application that allows users to search movies, view recommendations, and manage a favorites list — built with Flask (Python), PostgreSQL, and React (TypeScript) and connected to the TMDB API.
 
 ---
 
-## 🧠 About
+## About
 
 This project was built as a school assignment, but designed from the ground up as a **real-world, production-style web app**. It's structured around REST principles, uses JWT authentication, and is containerized with Docker Compose.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 - **Backend**: Flask REST API (`ds_webapp`)
 - **Frontend**: React + TypeScript (`ui-vite`)
@@ -18,7 +18,7 @@ This project was built as a school assignment, but designed from the ground up a
 - **Containerization**: Full Docker Compose setup
 - **Authentication**: JWT-based, stateless
  ---
-## 📦 Prerequisites
+## Prerequisites
 
 - [Docker](https://www.docker.com/) installed
 - [Node.js](https://nodejs.org/) (if running the frontend separately in dev mode)
@@ -27,14 +27,14 @@ This project was built as a school assignment, but designed from the ground up a
 
 ## 🚀 Running the App
 
-### 1. 🔑 Get a Bearer Token
+### 1. Get a Bearer Token
 
 Create a free account on [The Movie Database (TMDB)](https://www.themoviedb.org/) and generate an API Read Access Token (v4 auth) from your [API settings](https://www.themoviedb.org/settings/api).  
 This token is required to fetch movie data from their API.
 
 ---
 
-### 2. 🛠️ Create `.env` file
+### 2. Create `.env` file
 
 In the [`./ds_webapp/ds_webapp`](./ds_webapp/ds_webapp) directory, create a file named `.env` and add the following contents:
 
@@ -54,11 +54,11 @@ POSTGRES_PORT=5432
 SECRET_KEY=student.uantwerpen.be
 ```
 
-> ⚠️ Don't forget to replace `<your-Bearer-Token>` with the token from TMDB.
+ Don't forget to replace `<your-Bearer-Token>` with the token from TMDB.
 
 ---
 
-### 3. 🐳 Start the App
+### 3. Start the App
 
 Run this script to build and start all services using Docker Compose:
 
@@ -74,7 +74,7 @@ docker compose up --build
 
 ---
 
-### 4. 🌐 Access the App
+### 4. Access the App
 
 Once running, the app will be available at:
 
@@ -84,7 +84,7 @@ Once running, the app will be available at:
 - **Backend API**: [http://localhost:5000](http://localhost:5000)  
   Flask RESTful API powering the frontend and handling user auth, favorites, and movie fetching
 
-## 🧪 Running Tests
+## Running Tests
 
 To run backend tests inside the container:
 
@@ -93,7 +93,7 @@ docker compose exec app poetry run pytest
 ```
 ---
 
-## 🌍 RESTful API Design
+## RESTful API Design
 
 The backend adheres to REST principles:
 
@@ -104,11 +104,9 @@ The backend adheres to REST principles:
 - **Layered System**: Frontend, backend, DB, and external API are cleanly separated
 - **Code-on-Demand**: Welcome route demonstrates optional HTML snippets in responses
 
-📄 Full API behavior is demonstrated in [manual.pdf](./manual.pdf)
-
 ---
 
-## 🧪 Fault Tolerance
+## Fault Tolerance
 
 Each endpoint includes specific error handling with proper status codes:
 - 201 for successful creations
@@ -124,14 +122,14 @@ except asyncpg.UniqueViolationError:
 
 ---
 
-## 📦 Features & Extensions
+## Features & Extensions
 
-### 🔐 Authentication
+### Authentication
 - JWT token generation on login (3h validity)
 - Credentials securely stored using hashing
 - Implemented in [authentication.py](ds_webapp/ds_webapp/authentication/authentication.py)
 
-### 🎨 Frontend
+### Frontend
 Built in Vite + React + TypeScript  
 Located in [`ui-vite/`](./ui-vite)
 
@@ -143,11 +141,11 @@ Includes:
 Caching and UI state are handled via Redux:  
 [`ui-vite/src/redux`](./ui-vite/src/redux)
 
-### 🧠 Recommendation Logic
+### Recommendation Logic
 - Custom logic to find movies with similar genre and runtime (+/- 10 min)
 - Data pulled and filtered from the TMDB API
 
-### 🗄️ Database
+### Database
 PostgreSQL schema includes:
 ```sql
 CREATE TABLE IF NOT EXISTS users (
@@ -166,7 +164,7 @@ CREATE TABLE IF NOT EXISTS favorites (
 Schema is initialized via:
 - [`init-db/init-db.sql`](./init-db/init-db.sql)
 
-### 🐳 Dockerized Setup
+### Dockerized Setup
 
 Docker Compose orchestrates the full stack:
 
@@ -178,7 +176,7 @@ Config in [docker-compose.yml](./docker-compose.yml)
 
 ---
 
-## 🛠️ Scripts
+## Scripts
 
 - [`run_api.sh`](./run_api.sh): Starts the backend and DB containers
 - [`run_script.sh`](./run_script.sh): Example script runner
@@ -186,7 +184,7 @@ Config in [docker-compose.yml](./docker-compose.yml)
 
 ---
 
-## 📈 Performance & Scaling
+## Performance & Scaling
 
 - Responses are cached client- and server-side (with expiry)
 - Docker setup is Kubernetes-ready for future horizontal scaling
@@ -194,7 +192,7 @@ Config in [docker-compose.yml](./docker-compose.yml)
 
 ---
 
-## 📌 Design Decisions
+## Design Decisions
 
 - Chose PostgreSQL for realistic scalability, though SQLite would’ve worked for demo purposes
 - Opted for a 3-tier architecture to practice separation of concerns and modularity
@@ -202,7 +200,7 @@ Config in [docker-compose.yml](./docker-compose.yml)
 
 ---
 
-## 👤 Author
+## Author
 
 **Dio Ngei Okparaji**  
 [LinkedIn](www.linkedin.com/in/dio-ngei-okparaji-3769b4171) · [GitHub](https://github.com/Dio358)
