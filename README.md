@@ -25,7 +25,7 @@ This project was built as a school assignment, but designed from the ground up a
 
 ---
 
-## 🚀 Running the App
+## Running the App
 
 ### 1. Get a Bearer Token
 
