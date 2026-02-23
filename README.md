@@ -1,15 +1,22 @@
 # Full-Stack Movie App
 
-A fully containerized web application that allows users to search movies, view recommendations, and manage a favorites list — built with Flask (Python), PostgreSQL, and React (TypeScript) and connected to the TMDB API.
+This project demonstrates the design and deployment of a production-style fullstack application, with a focus on backend architecture, API design, and containerized systems.
 
----
+## Key Features
 
-## About
+- Fullstack architecture (Flask + React + PostgreSQL)
+- JWT-based authentication
+- Dockerized deployment (production-style setup)
+- RESTful API design
+- Movie recommendation logic based on similarity
 
-This project was built as a school assignment, but designed from the ground up as a **real-world, production-style web app**. It's structured around REST principles, uses JWT authentication, and is containerized with Docker Compose.
+## Engineering Highlights
 
----
-
+- Designed a full 3-tier architecture (frontend, backend, database)
+- Implemented stateless authentication using JWT
+- Built and containerized the entire system using Docker Compose
+- Developed custom recommendation logic based on genre and runtime similarity
+  
 ## Project Structure
 
 - **Backend**: Flask REST API (`ds_webapp`)
@@ -17,13 +24,12 @@ This project was built as a school assignment, but designed from the ground up a
 - **Database**: PostgreSQL with user & favorite movie tables
 - **Containerization**: Full Docker Compose setup
 - **Authentication**: JWT-based, stateless
- ---
+ 
 ## Prerequisites
 
 - [Docker](https://www.docker.com/) installed
 - [Node.js](https://nodejs.org/) (if running the frontend separately in dev mode)
 
----
 
 ## Running the App
 
@@ -32,7 +38,6 @@ This project was built as a school assignment, but designed from the ground up a
 Create a free account on [The Movie Database (TMDB)](https://www.themoviedb.org/) and generate an API Read Access Token (v4 auth) from your [API settings](https://www.themoviedb.org/settings/api).  
 This token is required to fetch movie data from their API.
 
----
 
 ### 2. Create `.env` file
 
@@ -56,7 +61,6 @@ SECRET_KEY=student.uantwerpen.be
 
  Don't forget to replace `<your-Bearer-Token>` with the token from TMDB.
 
----
 
 ### 3. Start the App
 
@@ -72,7 +76,6 @@ Or start manually:
 docker compose up --build
 ```
 
----
 
 ### 4. Access the App
 
@@ -91,20 +94,14 @@ To run backend tests inside the container:
 ```bash
 docker compose exec app poetry run pytest
 ```
----
 
-## RESTful API Design
+## API Design
 
-The backend adheres to REST principles:
+- RESTful API built with Flask
+- Stateless authentication using JWT
+- Structured endpoints with proper HTTP status codes
+- Separation between business logic, routing, and data access
 
-- **Client-Server**: Frontend and backend are completely decoupled
-- **Stateless**: All state (auth, queries) is passed via JWT or query params
-- **Uniform Interface**: Standard HTTP methods + codes
-- **Cacheability**: `Cache-Control` headers included in all responses
-- **Layered System**: Frontend, backend, DB, and external API are cleanly separated
-- **Code-on-Demand**: Welcome route demonstrates optional HTML snippets in responses
-
----
 
 ## Fault Tolerance
 
@@ -120,7 +117,6 @@ except asyncpg.UniqueViolationError:
     return jsonify({"error": "Username already exists"}), 409
 ```
 
----
 
 ## Features & Extensions
 
@@ -174,23 +170,18 @@ Docker Compose orchestrates the full stack:
 
 Config in [docker-compose.yml](./docker-compose.yml)
 
----
-
 ## Scripts
 
 - [`run_api.sh`](./run_api.sh): Starts the backend and DB containers
 - [`run_script.sh`](./run_script.sh): Example script runner
 - [`consume_api.py`](./ds_webapp/ds_webapp/tests/test_consume_api.py): Sample test client
 
----
+## Performance & Scalability
 
-## Performance & Scaling
+- Basic caching implemented on client and server side
+- Docker-based setup allows for scalable deployment
+- Architecture designed with separation of concerns for future extensibility
 
-- Responses are cached client- and server-side (with expiry)
-- Docker setup is Kubernetes-ready for future horizontal scaling
-- Load balancing can be introduced via Nginx + Docker
-
----
 
 ## Design Decisions
 
@@ -198,7 +189,6 @@ Config in [docker-compose.yml](./docker-compose.yml)
 - Opted for a 3-tier architecture to practice separation of concerns and modularity
 - Kept logic close to real-world deployments to use this as a showcase project
 
----
 
 ## Author
 
